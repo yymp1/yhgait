@@ -1,25 +1,47 @@
+# macOS
 .DS_Store
+._*
+
+# Python
 __pycache__/
 *.py[cod]
+.pytest_cache/
+.mypy_cache/
 
+# Local envs
+.venv/
 .venvs/
 
+# Large local data and generated outputs
+datasets/external/*
+!datasets/external/README.md
+!datasets/external/casia_b/
+datasets/external/casia_b/**
+!datasets/external/casia_b/.gitkeep
+
+datasets/processed/*
+!datasets/processed/README.md
+
+external/OpenGait/
+outputs/
 artifacts/
-artifacts_*/
+artifacts_clipcheck/
+artifacts_smoke/
 data/
 data_smoke/
 dataset/
-datasets/external/casia_b/**
-!datasets/external/casia_b/.gitkeep
-datasets/external/oumvlp/**
-!datasets/external/oumvlp/.gitkeep
-datasets/processed/CASIA-B-pkl/
-datasets/processed/*.log
-
-external/OpenGait/
 opengait_ready/
-outputs/
 reports/logs/
 samples/
-
 yolov8n.pt
+
+# Media samples
+samples/*.mp4
+samples/*.mov
+samples/*.m4v
+samples/*.MOV
+samples/*.MP4
+samples/*.M4V
+
+# OpenGait local outputs
+output/
