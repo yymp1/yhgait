@@ -1,0 +1,34 @@
+# OpenGait 预处理执行模板
+# 说明：
+# - 这里只是预处理执行层的轻量模板，不是训练配置。
+# - 下面路径中标了 TODO 的地方，需要你按自己的机器环境手动填写。
+
+project:
+  open_gait_repo_root: /path/to/OpenGait  # TODO: 改成你的 OpenGait 仓库路径
+  pretreatment_script: /path/to/OpenGait/datasets/pretreatment.py  # TODO: 默认通常在 OpenGait/datasets/pretreatment.py
+  python_executable: /usr/bin/python3  # TODO: 改成你实际用于运行 OpenGait 预处理脚本的 Python
+
+dataset:
+  display_name: CASIA-B
+  opengait_dataset_name: CASIAB  # TODO: 传给 OpenGait pretreatment.py 的 dataset 名称
+  raw_root: /Volumes/Data/person_orientation_demo/datasets/external/casia_b  # TODO: CASIA-B 原始数据目录
+  pretreatment_output_root: /Volumes/Data/person_orientation_demo/datasets/processed/CASIA-B-pkl  # TODO: OpenGait 预处理输出目录
+  expected_raw_layout: subject/type/view/frame.png
+
+execution:
+  dry_run: true  # true 时只打印将要执行的动作，不真正写文件
+  n_workers: 4
+  img_size: 64
+  log_file: /Volumes/Data/person_orientation_demo/datasets/processed/casia_b_pretreatment.log
+  verbose: false
+
+mapping:
+  current_project_data_root: /Volumes/Data/person_orientation_demo/data  # 当前项目导出的 data/
+  current_project_ready_root: /Volumes/Data/person_orientation_demo/opengait_ready  # 当前项目整理后的 OpenGait 风格目录
+  public_dataset_raw_root: /Volumes/Data/person_orientation_demo/datasets/external/casia_b
+  public_dataset_processed_root: /Volumes/Data/person_orientation_demo/datasets/processed/CASIA-B-pkl
+
+notes:
+  - "这个模板用于把 CASIA-B 原始数据和 OpenGait 预处理输出路径对齐。"
+  - "当前项目的自拍视频数据只建议用于整理、验证和 demo，不建议直接当训练全集。"
+  - "如果你后续改成 OUMVLP，只需要替换 opengait_dataset_name、raw_root 和输出目录。"

@@ -1,0 +1,40 @@
+# 数据路径映射模板
+# 说明：
+# - 请把 TODO 路径改成你自己的实际路径。
+# - 这里把当前项目导出、OpenGait 准备目录、以及未来公开数据集分开列出，方便后续接训练工程时直接引用。
+
+paths:
+  project_root: /Volumes/Data/person_orientation_demo  # TODO: 改成你的仓库路径
+
+  local_demo:
+    source_data_root: /Volumes/Data/person_orientation_demo/data
+    opengait_ready_root: /Volumes/Data/person_orientation_demo/opengait_ready
+    reports_root: /Volumes/Data/person_orientation_demo/reports
+
+  open_gait_repo:
+    repo_root: /path/to/OpenGait  # TODO
+    configs_root: /path/to/OpenGait/configs  # TODO
+    output_root: /path/to/OpenGait/output  # TODO
+
+  datasets:
+    casia_b:
+      raw_root: /Volumes/Data/person_orientation_demo/datasets/external/casia_b  # TODO: 下载后可放这里
+      pretreatment_root: /Volumes/Data/person_orientation_demo/datasets/external/casia_b_pkl  # TODO
+      open_gait_dataset_name: CASIA-B
+      note: CASIA-B 适合先做小规模流程验证
+
+    oumvlp:
+      raw_root: /Volumes/Data/person_orientation_demo/datasets/external/oumvlp  # TODO: 下载后可放这里
+      rearranged_root: /Volumes/Data/person_orientation_demo/datasets/external/oumvlp_rearranged  # TODO
+      pretreatment_root: /Volumes/Data/person_orientation_demo/datasets/external/oumvlp_pkl  # TODO
+      open_gait_dataset_name: OUMVLP
+      note: OUMVLP 适合后续做更大规模兼容验证
+
+    local_collect:
+      input_root: /Volumes/Data/person_orientation_demo/data
+      prepared_root: /Volumes/Data/person_orientation_demo/opengait_ready
+      subject_prefix: subject_
+      sequence_prefix: seq_
+      view_name: "000"
+      subject_key_mode: auto
+      note: 当前自拍视频只建议作为准备/验证数据，不建议直接当训练全集

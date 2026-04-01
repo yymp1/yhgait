@@ -1,0 +1,45 @@
+# OpenGait 前处理模板
+# 说明：
+# - 这里只是准备阶段模板，不是训练配置。
+# - 下面路径中标了 TODO 的地方，需要你按自己的机器环境手动填写。
+
+project:
+  repo_root: /Volumes/Data/person_orientation_demo  # TODO: 改成你的仓库绝对路径
+  local_export_data: /Volumes/Data/person_orientation_demo/data
+  local_opengait_ready: /Volumes/Data/person_orientation_demo/opengait_ready
+  local_reports: /Volumes/Data/person_orientation_demo/reports
+
+layout:
+  subject_prefix: subject_
+  sequence_prefix: seq_
+  view_name: "000"
+  frame_padding: 6
+  frame_prefix: ""
+  copy_mode: copy  # copy 或 symlink
+  subject_key_mode: auto  # auto / collection_identity / identity
+  copy_clips: true
+
+source_sets:
+  current_demo:
+    input_dir: /Volumes/Data/person_orientation_demo/data
+    output_dir: /Volumes/Data/person_orientation_demo/opengait_ready
+    note: 当前项目导出的本地自拍视频，适合做 OpenGait 接入前的整理与验证
+  casia_b:
+    raw_root: /path/to/CASIA-B  # TODO: 你自己下载后的 CASIA-B 原始目录
+    prepared_root: /path/to/CASIA-B-pkl  # TODO: 你自己生成的 OpenGait 预处理目录
+    note: 建议先用 CASIA-B 验证对接流程
+  oumvlp:
+    raw_root: /path/to/OUMVLP-raw  # TODO: 你自己下载后的 OUMVLP 原始目录
+    rearranged_root: /path/to/OUMVLP-silu-rearranged  # TODO: 按 OpenGait 官方脚本整理后的中间目录
+    prepared_root: /path/to/OUMVLP-pkl  # TODO: 你自己生成的 OpenGait 预处理目录
+    note: 数据量更大，流程更完整，适合后续扩展验证
+
+open_gait:
+  repo_root: /path/to/OpenGait  # TODO: 你的 OpenGait 仓库路径
+  config_dir: /path/to/OpenGait/configs  # TODO: 训练时再填写
+  output_dir: /path/to/OpenGait/output  # TODO: 训练/测试输出目录
+
+notes:
+  - "当前模板仅用于把本项目导出的 data/ 整理成更接近 OpenGait 的层级。"
+  - "默认建议 subject_key_mode=auto：unknown_id 按视频拆开，人工重命名后的 person_001 可跨视频合并。"
+  - "真正训练前，还需要根据 CASIA-B / OUMVLP 的官方或 OpenGait 预处理脚本生成 pkl 等中间文件。"

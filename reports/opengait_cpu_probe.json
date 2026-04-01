@@ -1,0 +1,59 @@
+{
+  "status": "passed",
+  "opengait_root": "/Volumes/Data/person_orientation_demo/external/OpenGait",
+  "config_path": "/Volumes/Data/person_orientation_demo/configs/opengait_casiab_smoke.yaml",
+  "iterations": 5,
+  "save_name": "cpu_probe_short_run",
+  "effective_dataset_root": "/Volumes/Data/person_orientation_demo/datasets/processed/CASIA-B-pkl",
+  "effective_dataset_partition": "/Volumes/Data/person_orientation_demo/external/OpenGait/datasets/CASIA-B/CASIA-B.json",
+  "output_path": "/Volumes/Data/person_orientation_demo/external/OpenGait/output/CASIA-B/GaitSet/cpu_probe_short_run",
+  "duration_seconds": 2.362,
+  "step_reports": [
+    {
+      "step_index": 1,
+      "iteration": 1,
+      "loss": 0.19128762185573578,
+      "optimizer_step_ok": true
+    },
+    {
+      "step_index": 2,
+      "iteration": 2,
+      "loss": 0.19460497796535492,
+      "optimizer_step_ok": true
+    },
+    {
+      "step_index": 3,
+      "iteration": 3,
+      "loss": 0.1924009919166565,
+      "optimizer_step_ok": true
+    },
+    {
+      "step_index": 4,
+      "iteration": 4,
+      "loss": 0.192605122923851,
+      "optimizer_step_ok": true
+    },
+    {
+      "step_index": 5,
+      "iteration": 5,
+      "loss": 0.19412314891815186,
+      "optimizer_step_ok": true
+    }
+  ],
+  "saved_checkpoints": [
+    "output/CASIA-B/GaitSet/cpu_probe_short_run/checkpoints/._cpu_probe_short_run-00005.pt",
+    "output/CASIA-B/GaitSet/cpu_probe_short_run/checkpoints/cpu_probe_short_run-00005.pt"
+  ],
+  "log_files": [
+    "/Volumes/Data/person_orientation_demo/external/OpenGait/output/CASIA-B/GaitSet/cpu_probe_short_run/logs/2026-04-01-03-14-35.txt"
+  ],
+  "summary_files": [
+    "/Volumes/Data/person_orientation_demo/external/OpenGait/output/CASIA-B/GaitSet/cpu_probe_short_run/summary/events.out.tfevents.1774984475.yympdeMac-mini.local.95090.0"
+  ],
+  "removed_appledouble_files": 6,
+  "error": "",
+  "notes": [
+    "这个脚本只用于 macOS/CPU 上的极小训练步探针，不替代 OpenGait 官方训练入口。",
+    "官方入口 external/OpenGait/opengait/main.py 仍然需要 NCCL/CUDA，本脚本通过运行时 monkeypatch 绕开该约束，只验证数据、模型、loss 和优化步是否能在 CPU 上跑通。"
+  ]
+}

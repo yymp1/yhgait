@@ -1,0 +1,14 @@
+diff --git a/datasets/pretreatment.py b/datasets/pretreatment.py
+index 35102e8..1f12f87 100644
+--- a/datasets/pretreatment.py
++++ b/datasets/pretreatment.py
+@@ -32,6 +32,9 @@ def imgs2pickle(img_groups: Tuple, output_path: Path, img_size: int = 64, verbos
+             logging.debug(f'Reading sid {sinfo[0]}, seq {sinfo[1]}, view {sinfo[2]} from {img_file}')
+ 
+         img = cv2.imread(str(img_file), cv2.IMREAD_GRAYSCALE)
++        if img is None:
++            logging.warning(f'{img_file} is unreadable.')
++            continue
+         
+         if dataset == 'GREW':
+             to_pickle.append(img.astype('uint8'))

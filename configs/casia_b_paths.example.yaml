@@ -1,0 +1,27 @@
+# CASIA-B 路径模板
+# 说明：
+# - 这里只是 OpenGait 对接前的路径占位模板，不是训练配置。
+# - 标了 TODO 的地方，需要你按自己的机器环境手动填写。
+
+project:
+  repo_root: /Volumes/Data/person_orientation_demo  # TODO: 改成你的仓库绝对路径
+  open_gait_repo_root: /path/to/OpenGait  # TODO: 改成你的 OpenGait 仓库路径
+  python_executable: /usr/bin/python3  # TODO: 改成你实际用于 OpenGait 预处理的 Python
+  pretreatment_script: /path/to/OpenGait/datasets/pretreatment.py  # TODO: 默认通常在 OpenGait/datasets/pretreatment.py
+
+dataset:
+  display_name: CASIA-B
+  opengait_dataset_name: CASIAB
+  raw_root: /Volumes/Data/person_orientation_demo/datasets/external/casia_b  # TODO: CASIA-B 原始数据目录
+  pretreatment_output_root: /Volumes/Data/person_orientation_demo/datasets/processed/CASIA-B-pkl  # TODO: OpenGait 预处理输出目录
+  expected_raw_layout: subject/type/view/frame.png
+
+run:
+  dry_run: true  # true 表示只检查路径/打印计划，不真正执行预处理
+  n_workers: 4
+  img_size: 64
+  log_file: /Volumes/Data/person_orientation_demo/datasets/processed/casia_b_pretreatment.log
+
+notes:
+  - "CASIA-B 适合先做小规模流程验证，也是当前建议优先接入 OpenGait 的公开数据集。"
+  - "这里不负责下载数据，也不负责训练，只负责把路径信息和 pretreatment 入口整理清楚。"
