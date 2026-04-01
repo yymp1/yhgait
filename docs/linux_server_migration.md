@@ -42,6 +42,17 @@ cd person_orientation_demo
 git clone https://github.com/ShiqiYu/OpenGait.git external/OpenGait
 ```
 
+如果 GitHub 还没推上去，也可以先用本地生成的 `git bundle` 兜底迁移：
+
+```bash
+scp /Volumes/Data/person_orientation_demo.bundle <user>@<linux-host>:~/work/
+ssh <user>@<linux-host>
+cd ~/work
+git clone person_orientation_demo.bundle person_orientation_demo
+cd person_orientation_demo
+git clone https://github.com/ShiqiYu/OpenGait.git external/OpenGait
+```
+
 如果你只打算直接训练，不打算重跑 pretreatment，那么 `external/OpenGait` 克隆完就够了，不需要把原始 `casia_b` 再复制上去。
 
 ## 从这台 Mac 往 Linux 拷数据
