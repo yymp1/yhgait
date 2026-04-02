@@ -103,6 +103,9 @@ def main() -> None:
 
 def build_plan(args: argparse.Namespace) -> PretreatmentPlan:
     opengait_root = Path(args.opengait_root).expanduser().resolve()
+    python_bin = Path(args.python_bin).expanduser()
+    if not python_bin.is_absolute():
+        python_bin = (Path.cwd() / python_bin).resolve()
     pretreatment_script = (
         Path(args.pretreatment_script).expanduser().resolve()
         if args.pretreatment_script
@@ -116,7 +119,7 @@ def build_plan(args: argparse.Namespace) -> PretreatmentPlan:
         else output_path.parent / "casia_b_pretreatment.log"
     )
     return PretreatmentPlan(
-        python_bin=Path(args.python_bin).expanduser(),
+        python_bin=python_bin,
         opengait_root=opengait_root,
         pretreatment_script=pretreatment_script,
         input_path=input_path,

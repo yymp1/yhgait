@@ -9,6 +9,51 @@
 5. 在视频帧上绘制 `bbox`、`skeleton`、`orientation label`
 6. 把结果视频写到 `outputs/`
 
+## 当前 Linux 现场状态（2026-04-01）
+
+- 真实 `CASIA-B silhouette` 已通过官方链接下载到 `downloads/GaitDatasetB-silh.zip`
+- 原始数据已解压并整理到 `datasets/external/casia_b`
+- 已安全清理 `47` 个真正为空的 `view` 目录，layout 检查结果为 `ready`
+- 已基于补丁后的 `external/OpenGait/datasets/pretreatment.py` 真实生成 `datasets/processed/CASIA-B-pkl`
+- 当前真实 pretreatment 产物为：
+  - `subject_count = 124`
+  - `pkl_count = 13592`
+- 基于真实数据的 Linux GPU 验证已经通过：
+  - 标准 smoke：passed
+  - probe：passed（`2` iter）
+  - strict short-run：passed（`5` iter）
+  - baseline small：passed（`20` iter）
+  - checkpoint resume：passed（`20 -> 25` iter）
+  - 受控中程恢复：passed（`25 -> 50` iter）
+  - 受控中程扩展：passed（`50 -> 100` iter）
+  - 受控长跑恢复：passed（`100 -> 300` iter）
+  - 受控长跑扩展：passed（`300 -> 500` iter）
+- 当前这台 Linux 主机已经完成“更长但仍受控”的训练前夜跑，已具备启动第一轮正式保守训练的条件
+- `formal_conservative_real` 第一轮正式保守训练已完整完成到 `1000` iter
+- 基于 `formal_conservative_real-01000.pt` 的官方评估入口已真实打通
+- 当前最小官方评估结果：
+  - `NM@R1 = 23.95%`
+  - `BG@R1 = 17.17%`
+  - `CL@R1 = 8.00%`
+- 当前最合理的下一步是先看评估结果与 TensorBoard 曲线，再决定是否规划下一轮更长训练
+- 当前仍不应把这轮结果写成最终实验结果或最终精度结论
+
+建议优先查看：
+
+- `reports/casia_b_download.md`
+- `reports/real_data_validation.md`
+- `reports/linux_third_round.md`
+- `reports/linux_midrun_validation.md`
+- `reports/linux_longrun_validation.md`
+- `reports/night_run_assessment.md`
+- `reports/training_stability_assessment.md`
+- `reports/formal_conservative_training.md`
+- `reports/formal_conservative_assessment.md`
+- `reports/formal_conservative_eval.md`
+- `reports/formal_conservative_snapshot.md`
+- `reports/formal_conservative_final_summary.md`
+- `reports/linux_third_round/opengait_smoke_test.md`
+
 ## 目录
 
 - `app.py`：命令行入口
@@ -819,9 +864,16 @@ datasets/processed/CASIA-B-pkl/
 
 ### OpenGait 训练前最后检查与 smoke test
 
-当前项目已经把 `CASIA-B silhouette -> OpenGait pretreatment -> CASIA-B-pkl` 这条链路打通，并做过一次训练前最后检查。
+当前项目已经把 `CASIA-B silhouette -> OpenGait pretreatment -> CASIA-B-pkl` 这条链路打通过一次，并做过训练前最后检查。
 
-pretreatment 产物当前的真实状态是：
+需要特别区分“历史结果”和“当前机器现场”：
+
+- 下面紧接着列出的 `subject_count = 124 / pkl_count = 13592` 是历史上一份完整 pretreatment 产物的检查结果
+- 它不等价于“任意新 clone 到 Linux 的工作区里都已经自带这份真实数据”
+- 当前 Linux 第二轮落地的现场结论见：`reports/linux_second_round.md`
+- 当前 Linux 机器上如果还没把真实 `CASIA-B-pkl` 拷过来，仓库里的 smoke 只能先用最小合成数据或 CPU probe 做入口验证，不能误当成真实数据验证
+
+历史上一份已完成的 pretreatment 产物状态是：
 
 - `datasets/processed/CASIA-B-pkl/` 已生成
 - `subject_count = 124`
@@ -882,13 +934,32 @@ python3.11 scripts/setup_opengait_pretreatment_env.py --with-train-smoke
 
 这里要特别说明一点：虽然 `GaitSet + CASIA-B` 核心路径本身不一定直接需要 `imageio` 或 `scikit-learn`，但当前 OpenGait 仓库的 `modeling/models/__init__.py` 会自动导入整包模型，BigGait 相关模块会顺带触发这些依赖。因此，对“当前官方仓库直接 import”来说，它们仍然是实际需要装的。
 
-相反，下面这些在这台机器上不值得继续投入时间：
+相反，下面这些“不值得继续投入时间”的判断，只适用于历史上的 `macOS Apple Silicon` 场景，不适用于当前这台 `Linux + NVIDIA GPU` 服务器：
 
 - CUDA 版 PyTorch
 - NCCL
 - 任何 NVIDIA GPU 训练栈
 
-因为当前机器没有 NVIDIA/CUDA 条件，继续折腾也不会把官方训练入口变成稳定的正式训练环境。
+当前 Linux 第二轮落地已经验证过：
+
+- 独立 GPU 环境可建立
+- `torch.cuda.is_available()` 为真
+- `torch.distributed.is_nccl_available()` 为真
+- 官方 `OpenGait` 训练入口可以在最小合成数据上通过 smoke
+
+因此，这一段历史判断不能直接沿用到当前 Linux 服务器；当前机器真正的剩余阻塞点已经变成“真实 `CASIA-B-pkl` 尚未同步到位”。
+
+后续 Linux 现场已经继续推进到：
+
+- 真实 `CASIA-B-pkl` 校验通过
+- 真实数据 smoke / probe / short-run 通过
+- `baseline_small_real` 的 `500 iter` 稳定性验证通过
+- 第一轮正式保守训练已完成到 `1000 iter`
+
+最新结果可直接看：
+
+- `reports/formal_conservative_training.md`
+- `reports/formal_conservative_assessment.md`
 
 当前项目里的一键 smoke 脚本是：
 

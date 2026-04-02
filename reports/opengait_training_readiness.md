@@ -1,11 +1,68 @@
 # OpenGait 训练前最终检查与本机推进结论
 
+> 说明：这份文档主要记录历史上的 `macOS Apple Silicon` 推进结论。
+> 当前 Linux 服务器上的第三轮现场结果已经再次发生变化，尤其是“真实数据是否到位”这一点已经从 blocked 变为 ready。
+> 请优先结合下面这些更新材料一起看：
+>
+> - `reports/linux_third_round.md`
+> - `reports/linux_midrun_validation.md`
+> - `reports/linux_longrun_validation.md`
+> - `reports/night_run_assessment.md`
+> - `reports/training_stability_assessment.md`
+> - `reports/real_data_validation.md`
+> - `reports/casia_b_download.md`
+> - `reports/linux_third_round/opengait_smoke_test.md`
+> - `reports/linux_third_round/real_gpu_probe.md`
+> - `reports/linux_third_round/real_gpu_short_run.md`
+> - `reports/linux_second_round.md`
+> - `reports/gpu_compatibility_report.md`
+> - `reports/real_data_smoke.md`
+> - `reports/formal_conservative_training.md`
+> - `reports/formal_conservative_assessment.md`
+> - `reports/formal_conservative_eval.md`
+> - `reports/formal_conservative_snapshot.md`
+> - `reports/formal_conservative_final_summary.md`
+
+## 当前 Linux 最新结论（2026-04-01）
+
+- 真实 `CASIA-B silhouette` 已在 Linux 上直接下载、解压、检查并清理空目录
+- 真实 `datasets/processed/CASIA-B-pkl` 已重新生成完成：
+  - `subject_count = 124`
+  - `pkl_count = 13592`
+- 当前 Linux 的 GPU/NCCL 路线不只是在合成最小数据上可用，而是已经在**真实数据**上通过：
+  - 标准 smoke
+  - `2` iter probe
+  - `5` iter 严格受限 short-run
+- 当前 Linux 还进一步完成了：
+  - `20` iter baseline small
+  - checkpoint resume `20 -> 25`
+- 当前 Linux 还进一步完成了受控中程验证：
+  - `25 -> 50` iter resume
+  - `50 -> 100` iter extension
+  - checkpoint / log / TensorBoard 连续到 `100` iter
+- 当前 Linux 还进一步完成了受控长跑验证：
+  - `100 -> 300` iter resume
+  - `300 -> 500` iter extension
+  - checkpoint / log / TensorBoard 连续到 `500` iter
+- 当前 Linux 还进一步完成了第一轮正式保守训练：
+  - `500 -> 1000` iter
+  - checkpoint / log / TensorBoard 连续到 `1000` iter
+- 当前 Linux 已基于 `formal_conservative_real-01000.pt` 完成一次真实官方评估
+- 当前最小官方评估结果：
+  - `NM@R1 = 23.95%`
+  - `BG@R1 = 17.17%`
+  - `CL@R1 = 8.00%`
+- 因此，当前 Linux 现场已经不再受“真实数据缺失”阻塞
+- 当前更准确的判断是：
+  - 第一轮正式保守训练已经完成并完成了评估收口
+  - 当前更适合先看评估结果，再决定是否进入下一轮更长训练
+
 ## 一句话结论
 
-- `CASIA-B-pkl` 已准备完成，可用于后续训练工程
-- OpenGait 官方训练入口在当前这台 `macOS Apple Silicon` 机器上仍然卡在 `NCCL`
-- 但本机已经通过一个低风险 `CPU/gloo` 兼容探针，真实完成了 `1` 步 smoke 和 `2` 步受限小跑
-- 这意味着：本机适合继续做数据检查、环境核对、兼容探针和极小训练验证；正式训练仍更建议迁移到 `Linux + NVIDIA GPU + CUDA/NCCL`
+- `CASIA-B-pkl` 已准备完成，当前 Linux GPU 路线已在真实数据上稳定跑完 `formal_conservative_real 1000 iter`
+- `formal_conservative_real-01000.pt` 已完成一次真实官方评估并输出指标
+- 当前已经具备“第一轮正式保守训练已完成并可交接”的收口状态
+- 下文关于 `macOS Apple Silicon` 的大段说明仅作历史归档，不构成对当前 Linux readiness 的否定
 
 ## Pretreatment 产物状态
 
@@ -20,24 +77,32 @@
 - 训练入口：`external/OpenGait/opengait/main.py`
 - 基线配置参考：`external/OpenGait/configs/gaitset/gaitset.yaml`
 - 本地最小配置：`configs/opengait_casiab_smoke.yaml`
+- 正式保守训练配置：`configs/opengait_casiab_formal_conservative.yaml`
+- 正式评估配置：`configs/opengait_casiab_formal_conservative_eval.yaml`
 
-真实 smoke 结果见 `reports/opengait_smoke_test.md`：
+历史 smoke 结果见 `reports/opengait_smoke_test.md`：
 
 - `import_check = passed`
 - `artifact_check = passed`
 - `data_smoke = passed`
 - `entry_smoke = failed`
 
-真实失败点：
+历史失败点：
 
 ```text
 RuntimeError: Distributed package doesn't have NCCL built in
 ```
 
-这说明当前 OpenGait 版本的官方训练入口仍然依赖：
+这说明 OpenGait 官方入口依赖：
 
 - `torch.distributed.init_process_group('nccl', init_method='env://')`
 - CUDA / NCCL 风格的分布式训练
+
+但对当前 Linux 主机来说，这个阻塞已经在后续轮次解决，证据包括：
+
+- 真实数据 GPU smoke / probe / short-run 已通过
+- `formal_conservative_real` 正式保守训练已完成到 `1000` iter
+- `formal_conservative_real-01000.pt` 官方评估已真实跑通
 
 ## 本机 CPU/gloo 兼容探针结果
 
@@ -100,35 +165,32 @@ RuntimeError: Distributed package doesn't have NCCL built in
 
 ### 当前机器上不值得继续投入的重依赖
 
-- CUDA toolkit
-- NCCL
-- 任何以 Linux + NVIDIA GPU 为前提的训练栈
+- 与当前 `GaitSet + CASIA-B + PyTorch cu118` 已验证组合无关的大版本栈切换
+- 在没有明确收益判断前，盲目升级驱动、PyTorch 主版本或改训练栈
 
-原因不是“不会装”，而是这台机器本身不提供这条路径所需的运行基础。
+原因不是机器不支持 GPU，而是当前已经有一套可用组合，不值得在本轮收口阶段重新引入不必要变量。
 
 ## 本机还能继续做什么
 
-- 继续做更小的 CPU 兼容探针
-- 改更保守的本地 smoke 配置
-- 做 checkpoint 可读性验证
-- 做更多数据完整性检查
-- 做 OpenGait 配置梳理和迁移交接准备
+- 做正式评估结果审阅
+- 做更多 checkpoint 评估快照
+- 基于 `01000.pt` 规划下一轮更长训练
+- 做结果归档与交接材料整理
 
 ## 本机不建议继续做什么
 
-- 不建议在这台机器上追求官方训练入口打通
-- 不建议把 CPU 兼容探针误当成正式训练方案
-- 不建议在没有 CUDA/NCCL 的前提下继续投入大量时间改 OpenGait 主干
+- 不建议把本轮收口和下一轮长训练混写
+- 不建议在没有先看评估结果的前提下直接继续扩训
+- 不建议在当前收口阶段同时改模型、batch、workers、frames 等关键变量
 
 ## 推荐下一步
 
-优先级最高的是把下面这些带去更合适的训练环境：
+优先级最高的是先基于当前结果做判断，而不是马上继续训练：
 
-- `datasets/processed/CASIA-B-pkl`
-- `configs/opengait_casiab_smoke.yaml`
-- `reports/opengait_training_env_freeze.txt`
-- `docs/opengait_local_patch.md`
-- `patches/pretreatment_skip_bad_frames.patch`
-- `reports/opengait_smoke_test.md`
-- `reports/cpu_probe_smoke.md`
-- `reports/cpu_probe_short_run.md`
+1. 先审阅这轮正式训练与评估结果：
+   - `reports/formal_conservative_training.md`
+   - `reports/formal_conservative_assessment.md`
+   - `reports/formal_conservative_eval.md`
+   - `reports/formal_conservative_snapshot.md`
+   - `reports/formal_conservative_final_summary.md`
+2. 如果确认值得继续，再从 `formal_conservative_real-01000.pt` 规划下一轮更长训练。

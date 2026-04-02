@@ -7,6 +7,8 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .mypy_cache/
+.codex
+.codex/
 
 # Local envs
 .venv/
@@ -45,3 +47,15 @@ samples/*.M4V
 
 # OpenGait local outputs
 output/
+
+# Local downloads and demo caches
+downloads/
+reports/*.npz
+reports/gait_demo_analysis_iter*.json
+reports/real_video_demo_runs/
+reports/*/*.mp4
+reports/*/*.npy
+reports/*/*.pkl
+reports/*/*.log
+reports/*/*.pid
+reports/*/*.csv

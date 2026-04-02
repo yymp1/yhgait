@@ -1,0 +1,154 @@
+# OpenGait GPU Probe 报告
+
+- 状态：`passed`
+- 模式：`baseline`
+- Python：`/home/bb/gait/yhgait/.venvs/opengait-gpu/bin/python3.10`
+- OpenGait：`/home/bb/gait/yhgait/external/OpenGait`
+- 基础配置：`/home/bb/gait/yhgait/configs/opengait_casiab_baseline_small.yaml`
+- 运行配置：`/home/bb/gait/yhgait/reports/linux_third_round/baseline_midrun_100.yaml`
+- dataset_root：`/home/bb/gait/yhgait/datasets/processed/CASIA-B-pkl`
+- dataset_partition：`/home/bb/gait/yhgait/external/OpenGait/datasets/CASIA-B/CASIA-B.json`
+- save_name：`baseline_small_real`
+- total_iter：`100`
+- num_workers：`1`
+- restore_hint：`50`
+- master_port：`29541`
+- returncode：`0`
+- 耗时：`9.86` 秒
+- 输出目录：`/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real`
+- checkpoint 数：`20`
+
+## 实际命令
+
+```bash
+/home/bb/gait/yhgait/.venvs/opengait-gpu/bin/python3.10 opengait/main.py --cfgs /home/bb/gait/yhgait/reports/linux_third_round/baseline_midrun_100.yaml --phase train --log_to_file
+```
+
+## 产物
+
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00005.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00010.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00015.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00020.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00025.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00030.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00035.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00040.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00045.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00050.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00055.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00060.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00065.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00070.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00075.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00080.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00085.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00090.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00095.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00100.pt`
+- log: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/logs/2026-04-01-18-07-37.txt`
+- log: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/logs/2026-04-01-18-10-41.txt`
+- log: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/logs/2026-04-01-18-24-41.txt`
+- log: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/logs/2026-04-01-18-37-10.txt`
+- summary: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/summary/events.out.tfevents.1775038057.bb-slam.86158.0`
+- summary: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/summary/events.out.tfevents.1775038241.bb-slam.86924.0`
+- summary: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/summary/events.out.tfevents.1775039081.bb-slam.90288.0`
+- summary: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/summary/events.out.tfevents.1775039830.bb-slam.96353.0`
+
+## 最新迭代日志
+
+- `[2026-04-01 18:37:14] [INFO]: Iteration 00081, Cost 0.08s, triplet_loss=0.1801, triplet_hard_loss=0.2541, triplet_loss_num=15.7258, triplet_mean_dist=0.0409`
+- `[2026-04-01 18:37:14] [INFO]: Iteration 00082, Cost 0.05s, triplet_loss=0.1629, triplet_hard_loss=0.2412, triplet_loss_num=15.0645, triplet_mean_dist=0.0557`
+- `[2026-04-01 18:37:14] [INFO]: Iteration 00083, Cost 0.05s, triplet_loss=0.1802, triplet_hard_loss=0.2662, triplet_loss_num=15.4839, triplet_mean_dist=0.0548`
+- `[2026-04-01 18:37:14] [INFO]: Iteration 00084, Cost 0.06s, triplet_loss=0.1712, triplet_hard_loss=0.2423, triplet_loss_num=15.3226, triplet_mean_dist=0.0478`
+- `[2026-04-01 18:37:14] [INFO]: Iteration 00085, Cost 0.05s, triplet_loss=0.1821, triplet_hard_loss=0.2418, triplet_loss_num=16.0000, triplet_mean_dist=0.0348`
+- `[2026-04-01 18:37:14] [INFO]: Iteration 00086, Cost 0.07s, triplet_loss=0.1852, triplet_hard_loss=0.2536, triplet_loss_num=15.8387, triplet_mean_dist=0.0412`
+- `[2026-04-01 18:37:14] [INFO]: Iteration 00087, Cost 0.06s, triplet_loss=0.1771, triplet_hard_loss=0.2708, triplet_loss_num=15.0161, triplet_mean_dist=0.0553`
+- `[2026-04-01 18:37:14] [INFO]: Iteration 00088, Cost 0.05s, triplet_loss=0.1515, triplet_hard_loss=0.1934, triplet_loss_num=15.5645, triplet_mean_dist=0.0425`
+- `[2026-04-01 18:37:14] [INFO]: Iteration 00089, Cost 0.05s, triplet_loss=0.1797, triplet_hard_loss=0.2602, triplet_loss_num=15.3387, triplet_mean_dist=0.0525`
+- `[2026-04-01 18:37:14] [INFO]: Iteration 00090, Cost 0.05s, triplet_loss=0.1854, triplet_hard_loss=0.2632, triplet_loss_num=15.3065, triplet_mean_dist=0.0472`
+- `[2026-04-01 18:37:14] [INFO]: Iteration 00091, Cost 0.07s, triplet_loss=0.1807, triplet_hard_loss=0.3032, triplet_loss_num=15.3226, triplet_mean_dist=0.0622`
+- `[2026-04-01 18:37:14] [INFO]: Iteration 00092, Cost 0.05s, triplet_loss=0.1824, triplet_hard_loss=0.3093, triplet_loss_num=14.9194, triplet_mean_dist=0.0750`
+- `[2026-04-01 18:37:14] [INFO]: Iteration 00093, Cost 0.05s, triplet_loss=0.1799, triplet_hard_loss=0.2682, triplet_loss_num=15.7742, triplet_mean_dist=0.0486`
+- `[2026-04-01 18:37:15] [INFO]: Iteration 00094, Cost 0.05s, triplet_loss=0.1753, triplet_hard_loss=0.2533, triplet_loss_num=16.0000, triplet_mean_dist=0.0394`
+- `[2026-04-01 18:37:15] [INFO]: Iteration 00095, Cost 0.05s, triplet_loss=0.1863, triplet_hard_loss=0.2574, triplet_loss_num=15.8065, triplet_mean_dist=0.0354`
+- `[2026-04-01 18:37:15] [INFO]: Iteration 00096, Cost 0.07s, triplet_loss=0.1804, triplet_hard_loss=0.2710, triplet_loss_num=15.4839, triplet_mean_dist=0.0480`
+- `[2026-04-01 18:37:15] [INFO]: Iteration 00097, Cost 0.06s, triplet_loss=0.1757, triplet_hard_loss=0.2254, triplet_loss_num=16.0000, triplet_mean_dist=0.0311`
+- `[2026-04-01 18:37:15] [INFO]: Iteration 00098, Cost 0.05s, triplet_loss=0.1825, triplet_hard_loss=0.3100, triplet_loss_num=14.2258, triplet_mean_dist=0.0732`
+- `[2026-04-01 18:37:15] [INFO]: Iteration 00099, Cost 0.05s, triplet_loss=0.1981, triplet_hard_loss=0.3025, triplet_loss_num=15.2581, triplet_mean_dist=0.0680`
+- `[2026-04-01 18:37:15] [INFO]: Iteration 00100, Cost 0.05s, triplet_loss=0.1758, triplet_hard_loss=0.2303, triplet_loss_num=16.0000, triplet_mean_dist=0.0315`
+
+## stdout tail
+
+```text
+(empty)
+```
+
+## stderr tail
+
+```text
+xFormers not available
+xFormers not available
+[2026-04-01 18:37:10] [INFO]: {'find_unused_parameters': False, 'enable_float16': False, 'with_test': False, 'fix_BN': False, 'log_iter': 1, 'restore_ckpt_strict': True, 'optimizer_reset': False, 'scheduler_reset': False, 'restore_hint': 50, 'save_iter': 5, 'save_name': 'baseline_small_real', 'sync_BN': False, 'total_iter': 100, 'sampler': {'batch_shuffle': False, 'batch_size': [2, 2], 'frames_num_fixed': 16, 'frames_num_max': 16, 'frames_num_min': 16, 'sample_type': 'fixed_unordered', 'type': 'TripletSampler'}, 'transform': [{'type': 'BaseSilCuttingTransform'}]}
+[2026-04-01 18:37:10] [INFO]: {'model': 'GaitSet', 'in_channels': [1, 32, 64, 128], 'SeparateFCs': {'in_channels': 128, 'out_channels': 256, 'parts_num': 62}, 'bin_num': [16, 8, 4, 2, 1]}
+[2026-04-01 18:37:10] [INFO]: {'dataset_name': 'CASIA-B', 'dataset_root': '/home/bb/gait/yhgait/datasets/processed/CASIA-B-pkl', 'num_workers': 1, 'dataset_partition': '/home/bb/gait/yhgait/external/OpenGait/datasets/CASIA-B/CASIA-B.json', 'remove_no_gallery': False, 'cache': False, 'test_dataset_name': 'CASIA-B'}
+[2026-04-01 18:37:10] [INFO]: -------- Train Pid List --------
+[2026-04-01 18:37:10] [INFO]: [001, 002, ..., 074]
+[2026-04-01 18:37:11] [INFO]: {'lr': 0.1, 'momentum': 0.9, 'solver': 'SGD', 'weight_decay': 0.0005}
+[2026-04-01 18:37:11] [INFO]: {'gamma': 0.1, 'milestones': [10, 15], 'scheduler': 'MultiStepLR'}
+[2026-04-01 18:37:11] [INFO]: Restore Parameters from output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00050.pt !!!
+[2026-04-01 18:37:11] [INFO]: Parameters Count: 2.59459M
+[2026-04-01 18:37:11] [INFO]: Model Initialization Finished!
+[2026-04-01 18:37:12] [INFO]: Iteration 00051, Cost 3.41s, triplet_loss=0.1894, triplet_hard_loss=0.2701, triplet_loss_num=15.6129, triplet_mean_dist=0.0482
+[2026-04-01 18:37:12] [INFO]: Iteration 00052, Cost 0.06s, triplet_loss=0.1783, triplet_hard_loss=0.2508, triplet_loss_num=15.8710, triplet_mean_dist=0.0459
+[2026-04-01 18:37:12] [INFO]: Iteration 00053, Cost 0.05s, triplet_loss=0.1545, triplet_hard_loss=0.2071, triplet_loss_num=15.9677, triplet_mean_dist=0.0468
+[2026-04-01 18:37:12] [INFO]: Iteration 00054, Cost 0.05s, triplet_loss=0.1392, triplet_hard_loss=0.1739, triplet_loss_num=14.9677, triplet_mean_dist=0.0444
+[2026-04-01 18:37:12] [INFO]: Iteration 00055, Cost 0.06s, triplet_loss=0.1237, triplet_hard_loss=0.1422, triplet_loss_num=13.7419, triplet_mean_dist=0.0528
+[2026-04-01 18:37:12] [INFO]: Iteration 00056, Cost 0.10s, triplet_loss=0.1782, triplet_hard_loss=0.2403, triplet_loss_num=16.0000, triplet_mean_dist=0.0378
+[2026-04-01 18:37:12] [INFO]: Iteration 00057, Cost 0.05s, triplet_loss=0.1715, triplet_hard_loss=0.2553, triplet_loss_num=15.5968, triplet_mean_dist=0.0457
+[2026-04-01 18:37:12] [INFO]: Iteration 00058, Cost 0.05s, triplet_loss=0.1766, triplet_hard_loss=0.2382, triplet_loss_num=15.9355, triplet_mean_dist=0.0390
+[2026-04-01 18:37:13] [INFO]: Iteration 00059, Cost 0.05s, triplet_loss=0.1856, triplet_hard_loss=0.2249, triplet_loss_num=16.0000, triplet_mean_dist=0.0255
+[2026-04-01 18:37:13] [INFO]: Iteration 00060, Cost 0.06s, triplet_loss=0.1774, triplet_hard_loss=0.2424, triplet_loss_num=15.9355, triplet_mean_dist=0.0342
+[2026-04-01 18:37:13] [INFO]: Iteration 00061, Cost 0.07s, triplet_loss=0.1587, triplet_hard_loss=0.2361, triplet_loss_num=15.0484, triplet_mean_dist=0.0513
+[2026-04-01 18:37:13] [INFO]: Iteration 00062, Cost 0.05s, triplet_loss=0.1711, triplet_hard_loss=0.2386, triplet_loss_num=15.2903, triplet_mean_dist=0.0434
+[2026-04-01 18:37:13] [INFO]: Iteration 00063, Cost 0.05s, triplet_loss=0.1768, triplet_hard_loss=0.2376, triplet_loss_num=16.0000, triplet_mean_dist=0.0383
+[2026-04-01 18:37:13] [INFO]: Iteration 00064, Cost 0.05s, triplet_loss=0.1871, triplet_hard_loss=0.2561, triplet_loss_num=15.4516, triplet_mean_dist=0.0383
+[2026-04-01 18:37:13] [INFO]: Iteration 00065, Cost 0.05s, triplet_loss=0.1779, triplet_hard_loss=0.2361, triplet_loss_num=15.6452, triplet_mean_dist=0.0371
+[2026-04-01 18:37:13] [INFO]: Iteration 00066, Cost 0.07s, triplet_loss=0.1773, triplet_hard_loss=0.2737, triplet_loss_num=14.6129, triplet_mean_dist=0.0582
+[2026-04-01 18:37:13] [INFO]: Iteration 00067, Cost 0.05s, triplet_loss=0.1653, triplet_hard_loss=0.1937, triplet_loss_num=16.0000, triplet_mean_dist=0.0297
+[2026-04-01 18:37:13] [INFO]: Iteration 00068, Cost 0.05s, triplet_loss=0.1835, triplet_hard_loss=0.2703, triplet_loss_num=15.8065, triplet_mean_dist=0.0423
+[2026-04-01 18:37:13] [INFO]: Iteration 00069, Cost 0.05s, triplet_loss=0.1727, triplet_hard_loss=0.2559, triplet_loss_num=14.9355, triplet_mean_dist=0.0503
+[2026-04-01 18:37:13] [INFO]: Iteration 00070, Cost 0.05s, triplet_loss=0.1855, triplet_hard_loss=0.2775, triplet_loss_num=15.6774, triplet_mean_dist=0.0514
+[2026-04-01 18:37:13] [INFO]: Iteration 00071, Cost 0.07s, triplet_loss=0.1610, triplet_hard_loss=0.2259, triplet_loss_num=15.6290, triplet_mean_dist=0.0427
+[2026-04-01 18:37:13] [INFO]: Iteration 00072, Cost 0.05s, triplet_loss=0.1776, triplet_hard_loss=0.2056, triplet_loss_num=16.0000, triplet_mean_dist=0.0231
+[2026-04-01 18:37:13] [INFO]: Iteration 00073, Cost 0.05s, triplet_loss=0.1740, triplet_hard_loss=0.2552, triplet_loss_num=15.7742, triplet_mean_dist=0.0478
+[2026-04-01 18:37:13] [INFO]: Iteration 00074, Cost 0.05s, triplet_loss=0.1752, triplet_hard_loss=0.2279, triplet_loss_num=15.9032, triplet_mean_dist=0.0346
+[2026-04-01 18:37:13] [INFO]: Iteration 00075, Cost 0.05s, triplet_loss=0.1945, triplet_hard_loss=0.2676, triplet_loss_num=15.4516, triplet_mean_dist=0.0502
+[2026-04-01 18:37:14] [INFO]: Iteration 00076, Cost 0.07s, triplet_loss=0.1738, triplet_hard_loss=0.2544, triplet_loss_num=15.9839, triplet_mean_dist=0.0424
+[2026-04-01 18:37:14] [INFO]: Iteration 00077, Cost 0.05s, triplet_loss=0.1807, triplet_hard_loss=0.2905, triplet_loss_num=15.0645, triplet_mean_dist=0.0702
+[2026-04-01 18:37:14] [INFO]: Iteration 00078, Cost 0.05s, triplet_loss=0.1643, triplet_hard_loss=0.2251, triplet_loss_num=15.2419, triplet_mean_dist=0.0461
+[2026-04-01 18:37:14] [INFO]: Iteration 00079, Cost 0.05s, triplet_loss=0.1726, triplet_hard_loss=0.2570, triplet_loss_num=15.8387, triplet_mean_dist=0.0434
+[2026-04-01 18:37:14] [INFO]: Iteration 00080, Cost 0.05s, triplet_loss=0.1790, triplet_hard_loss=0.2426, triplet_loss_num=15.4677, triplet_mean_dist=0.0384
+[2026-04-01 18:37:14] [INFO]: Iteration 00081, Cost 0.08s, triplet_loss=0.1801, triplet_hard_loss=0.2541, triplet_loss_num=15.7258, triplet_mean_dist=0.0409
+[2026-04-01 18:37:14] [INFO]: Iteration 00082, Cost 0.05s, triplet_loss=0.1629, triplet_hard_loss=0.2412, triplet_loss_num=15.0645, triplet_mean_dist=0.0557
+[2026-04-01 18:37:14] [INFO]: Iteration 00083, Cost 0.05s, triplet_loss=0.1802, triplet_hard_loss=0.2662, triplet_loss_num=15.4839, triplet_mean_dist=0.0548
+[2026-04-01 18:37:14] [INFO]: Iteration 00084, Cost 0.06s, triplet_loss=0.1712, triplet_hard_loss=0.2423, triplet_loss_num=15.3226, triplet_mean_dist=0.0478
+[2026-04-01 18:37:14] [INFO]: Iteration 00085, Cost 0.05s, triplet_loss=0.1821, triplet_hard_loss=0.2418, triplet_loss_num=16.0000, triplet_mean_dist=0.0348
+[2026-04-01 18:37:14] [INFO]: Iteration 00086, Cost 0.07s, triplet_loss=0.1852, triplet_hard_loss=0.2536, triplet_loss_num=15.8387, triplet_mean_dist=0.0412
+[2026-04-01 18:37:14] [INFO]: Iteration 00087, Cost 0.06s, triplet_loss=0.1771, triplet_hard_loss=0.2708, triplet_loss_num=15.0161, triplet_mean_dist=0.0553
+[2026-04-01 18:37:14] [INFO]: Iteration 00088, Cost 0.05s, triplet_loss=0.1515, triplet_hard_loss=0.1934, triplet_loss_num=15.5645, triplet_mean_dist=0.0425
+[2026-04-01 18:37:14] [INFO]: Iteration 00089, Cost 0.05s, triplet_loss=0.1797, triplet_hard_loss=0.2602, triplet_loss_num=15.3387, triplet_mean_dist=0.0525
+[2026-04-01 18:37:14] [INFO]: Iteration 00090, Cost 0.05s, triplet_loss=0.1854, triplet_hard_loss=0.2632, triplet_loss_num=15.3065, triplet_mean_dist=0.0472
+[2026-04-01 18:37:14] [INFO]: Iteration 00091, Cost 0.07s, triplet_loss=0.1807, triplet_hard_loss=0.3032, triplet_loss_num=15.3226, triplet_mean_dist=0.0622
+[2026-04-01 18:37:14] [INFO]: Iteration 00092, Cost 0.05s, triplet_loss=0.1824, triplet_hard_loss=0.3093, triplet_loss_num=14.9194, triplet_mean_dist=0.0750
+[2026-04-01 18:37:14] [INFO]: Iteration 00093, Cost 0.05s, triplet_loss=0.1799, triplet_hard_loss=0.2682, triplet_loss_num=15.7742, triplet_mean_dist=0.0486
+[2026-04-01 18:37:15] [INFO]: Iteration 00094, Cost 0.05s, triplet_loss=0.1753, triplet_hard_loss=0.2533, triplet_loss_num=16.0000, triplet_mean_dist=0.0394
+[2026-04-01 18:37:15] [INFO]: Iteration 00095, Cost 0.05s, triplet_loss=0.1863, triplet_hard_loss=0.2574, triplet_loss_num=15.8065, triplet_mean_dist=0.0354
+[2026-04-01 18:37:15] [INFO]: Iteration 00096, Cost 0.07s, triplet_loss=0.1804, triplet_hard_loss=0.2710, triplet_loss_num=15.4839, triplet_mean_dist=0.0480
+[2026-04-01 18:37:15] [INFO]: Iteration 00097, Cost 0.06s, triplet_loss=0.1757, triplet_hard_loss=0.2254, triplet_loss_num=16.0000, triplet_mean_dist=0.0311
+[2026-04-01 18:37:15] [INFO]: Iteration 00098, Cost 0.05s, triplet_loss=0.1825, triplet_hard_loss=0.3100, triplet_loss_num=14.2258, triplet_mean_dist=0.0732
+[2026-04-01 18:37:15] [INFO]: Iteration 00099, Cost 0.05s, triplet_loss=0.1981, triplet_hard_loss=0.3025, triplet_loss_num=15.2581, triplet_mean_dist=0.0680
+[2026-04-01 18:37:15] [INFO]: Iteration 00100, Cost 0.05s, triplet_loss=0.1758, triplet_hard_loss=0.2303, triplet_loss_num=16.0000, triplet_mean_dist=0.0315
+[rank0]:[W401 18:37:15.369604333 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+
+```

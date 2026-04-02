@@ -1,0 +1,101 @@
+# OpenGait GPU Probe 报告
+
+- 状态：`passed`
+- 模式：`baseline`
+- Python：`/home/bb/gait/yhgait/.venvs/opengait-gpu/bin/python3.10`
+- OpenGait：`/home/bb/gait/yhgait/external/OpenGait`
+- 基础配置：`/home/bb/gait/yhgait/configs/opengait_casiab_baseline_small.yaml`
+- 运行配置：`/home/bb/gait/yhgait/reports/linux_third_round/baseline_small_real.yaml`
+- dataset_root：`/home/bb/gait/yhgait/datasets/processed/CASIA-B-pkl`
+- dataset_partition：`/home/bb/gait/yhgait/external/OpenGait/datasets/CASIA-B/CASIA-B.json`
+- save_name：`baseline_small_real`
+- total_iter：`20`
+- num_workers：`1`
+- restore_hint：`0`
+- master_port：`29541`
+- returncode：`0`
+- 耗时：`8.92` 秒
+- 输出目录：`/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real`
+- checkpoint 数：`4`
+
+## 实际命令
+
+```bash
+/home/bb/gait/yhgait/.venvs/opengait-gpu/bin/python3.10 opengait/main.py --cfgs /home/bb/gait/yhgait/reports/linux_third_round/baseline_small_real.yaml --phase train --log_to_file
+```
+
+## 产物
+
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00005.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00010.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00015.pt`
+- checkpoint: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/checkpoints/baseline_small_real-00020.pt`
+- log: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/logs/2026-04-01-18-07-37.txt`
+- summary: `/home/bb/gait/yhgait/external/OpenGait/output/CASIA-B/GaitSet/baseline_small_real/summary/events.out.tfevents.1775038057.bb-slam.86158.0`
+
+## 最新迭代日志
+
+- `[2026-04-01 18:07:40] [INFO]: Iteration 00001, Cost 3.85s, triplet_loss=0.1946, triplet_hard_loss=0.2107, triplet_loss_num=16.0000, triplet_mean_dist=0.0117`
+- `[2026-04-01 18:07:40] [INFO]: Iteration 00002, Cost 0.06s, triplet_loss=0.1935, triplet_hard_loss=0.2076, triplet_loss_num=16.0000, triplet_mean_dist=0.0110`
+- `[2026-04-01 18:07:40] [INFO]: Iteration 00003, Cost 0.06s, triplet_loss=0.1913, triplet_hard_loss=0.2032, triplet_loss_num=16.0000, triplet_mean_dist=0.0110`
+- `[2026-04-01 18:07:40] [INFO]: Iteration 00004, Cost 0.06s, triplet_loss=0.1862, triplet_hard_loss=0.1944, triplet_loss_num=16.0000, triplet_mean_dist=0.0111`
+- `[2026-04-01 18:07:40] [INFO]: Iteration 00005, Cost 0.06s, triplet_loss=0.1785, triplet_hard_loss=0.1882, triplet_loss_num=16.0000, triplet_mean_dist=0.0150`
+- `[2026-04-01 18:07:40] [INFO]: Iteration 00006, Cost 0.08s, triplet_loss=0.1921, triplet_hard_loss=0.2083, triplet_loss_num=16.0000, triplet_mean_dist=0.0123`
+- `[2026-04-01 18:07:40] [INFO]: Iteration 00007, Cost 0.06s, triplet_loss=0.1869, triplet_hard_loss=0.2136, triplet_loss_num=16.0000, triplet_mean_dist=0.0169`
+- `[2026-04-01 18:07:40] [INFO]: Iteration 00008, Cost 0.06s, triplet_loss=0.1884, triplet_hard_loss=0.2117, triplet_loss_num=16.0000, triplet_mean_dist=0.0169`
+- `[2026-04-01 18:07:40] [INFO]: Iteration 00009, Cost 0.06s, triplet_loss=0.1919, triplet_hard_loss=0.2106, triplet_loss_num=16.0000, triplet_mean_dist=0.0137`
+- `[2026-04-01 18:07:40] [INFO]: Iteration 00010, Cost 0.05s, triplet_loss=0.1873, triplet_hard_loss=0.2223, triplet_loss_num=16.0000, triplet_mean_dist=0.0199`
+- `[2026-04-01 18:07:40] [INFO]: Iteration 00011, Cost 0.08s, triplet_loss=0.1679, triplet_hard_loss=0.2282, triplet_loss_num=15.7742, triplet_mean_dist=0.0360`
+- `[2026-04-01 18:07:40] [INFO]: Iteration 00012, Cost 0.05s, triplet_loss=0.1737, triplet_hard_loss=0.2261, triplet_loss_num=15.9032, triplet_mean_dist=0.0305`
+- `[2026-04-01 18:07:40] [INFO]: Iteration 00013, Cost 0.05s, triplet_loss=0.1831, triplet_hard_loss=0.2241, triplet_loss_num=16.0000, triplet_mean_dist=0.0274`
+- `[2026-04-01 18:07:40] [INFO]: Iteration 00014, Cost 0.06s, triplet_loss=0.1844, triplet_hard_loss=0.2392, triplet_loss_num=15.9677, triplet_mean_dist=0.0282`
+- `[2026-04-01 18:07:41] [INFO]: Iteration 00015, Cost 0.06s, triplet_loss=0.1809, triplet_hard_loss=0.2250, triplet_loss_num=15.9355, triplet_mean_dist=0.0277`
+- `[2026-04-01 18:07:41] [INFO]: Iteration 00016, Cost 0.08s, triplet_loss=0.1746, triplet_hard_loss=0.2557, triplet_loss_num=15.2742, triplet_mean_dist=0.0459`
+- `[2026-04-01 18:07:41] [INFO]: Iteration 00017, Cost 0.05s, triplet_loss=0.1739, triplet_hard_loss=0.1955, triplet_loss_num=16.0000, triplet_mean_dist=0.0230`
+- `[2026-04-01 18:07:41] [INFO]: Iteration 00018, Cost 0.06s, triplet_loss=0.1852, triplet_hard_loss=0.2525, triplet_loss_num=16.0000, triplet_mean_dist=0.0327`
+- `[2026-04-01 18:07:41] [INFO]: Iteration 00019, Cost 0.05s, triplet_loss=0.1735, triplet_hard_loss=0.2425, triplet_loss_num=15.4677, triplet_mean_dist=0.0388`
+- `[2026-04-01 18:07:41] [INFO]: Iteration 00020, Cost 0.05s, triplet_loss=0.1851, triplet_hard_loss=0.2559, triplet_loss_num=16.0000, triplet_mean_dist=0.0390`
+
+## stdout tail
+
+```text
+(empty)
+```
+
+## stderr tail
+
+```text
+xFormers not available
+xFormers not available
+[2026-04-01 18:07:37] [INFO]: {'find_unused_parameters': False, 'enable_float16': False, 'with_test': False, 'fix_BN': False, 'log_iter': 1, 'restore_ckpt_strict': True, 'optimizer_reset': False, 'scheduler_reset': False, 'restore_hint': 0, 'save_iter': 5, 'save_name': 'baseline_small_real', 'sync_BN': False, 'total_iter': 20, 'sampler': {'batch_shuffle': False, 'batch_size': [2, 2], 'frames_num_fixed': 16, 'frames_num_max': 16, 'frames_num_min': 16, 'sample_type': 'fixed_unordered', 'type': 'TripletSampler'}, 'transform': [{'type': 'BaseSilCuttingTransform'}]}
+[2026-04-01 18:07:37] [INFO]: {'model': 'GaitSet', 'in_channels': [1, 32, 64, 128], 'SeparateFCs': {'in_channels': 128, 'out_channels': 256, 'parts_num': 62}, 'bin_num': [16, 8, 4, 2, 1]}
+[2026-04-01 18:07:37] [INFO]: {'dataset_name': 'CASIA-B', 'dataset_root': '/home/bb/gait/yhgait/datasets/processed/CASIA-B-pkl', 'num_workers': 1, 'dataset_partition': '/home/bb/gait/yhgait/external/OpenGait/datasets/CASIA-B/CASIA-B.json', 'remove_no_gallery': False, 'cache': False, 'test_dataset_name': 'CASIA-B'}
+[2026-04-01 18:07:37] [INFO]: -------- Train Pid List --------
+[2026-04-01 18:07:37] [INFO]: [001, 002, ..., 074]
+[2026-04-01 18:07:38] [INFO]: {'lr': 0.1, 'momentum': 0.9, 'solver': 'SGD', 'weight_decay': 0.0005}
+[2026-04-01 18:07:38] [INFO]: {'gamma': 0.1, 'milestones': [10, 15], 'scheduler': 'MultiStepLR'}
+[2026-04-01 18:07:38] [INFO]: Parameters Count: 2.59459M
+[2026-04-01 18:07:38] [INFO]: Model Initialization Finished!
+[2026-04-01 18:07:40] [INFO]: Iteration 00001, Cost 3.85s, triplet_loss=0.1946, triplet_hard_loss=0.2107, triplet_loss_num=16.0000, triplet_mean_dist=0.0117
+[2026-04-01 18:07:40] [INFO]: Iteration 00002, Cost 0.06s, triplet_loss=0.1935, triplet_hard_loss=0.2076, triplet_loss_num=16.0000, triplet_mean_dist=0.0110
+[2026-04-01 18:07:40] [INFO]: Iteration 00003, Cost 0.06s, triplet_loss=0.1913, triplet_hard_loss=0.2032, triplet_loss_num=16.0000, triplet_mean_dist=0.0110
+[2026-04-01 18:07:40] [INFO]: Iteration 00004, Cost 0.06s, triplet_loss=0.1862, triplet_hard_loss=0.1944, triplet_loss_num=16.0000, triplet_mean_dist=0.0111
+[2026-04-01 18:07:40] [INFO]: Iteration 00005, Cost 0.06s, triplet_loss=0.1785, triplet_hard_loss=0.1882, triplet_loss_num=16.0000, triplet_mean_dist=0.0150
+[2026-04-01 18:07:40] [INFO]: Iteration 00006, Cost 0.08s, triplet_loss=0.1921, triplet_hard_loss=0.2083, triplet_loss_num=16.0000, triplet_mean_dist=0.0123
+[2026-04-01 18:07:40] [INFO]: Iteration 00007, Cost 0.06s, triplet_loss=0.1869, triplet_hard_loss=0.2136, triplet_loss_num=16.0000, triplet_mean_dist=0.0169
+[2026-04-01 18:07:40] [INFO]: Iteration 00008, Cost 0.06s, triplet_loss=0.1884, triplet_hard_loss=0.2117, triplet_loss_num=16.0000, triplet_mean_dist=0.0169
+[2026-04-01 18:07:40] [INFO]: Iteration 00009, Cost 0.06s, triplet_loss=0.1919, triplet_hard_loss=0.2106, triplet_loss_num=16.0000, triplet_mean_dist=0.0137
+[2026-04-01 18:07:40] [INFO]: Iteration 00010, Cost 0.05s, triplet_loss=0.1873, triplet_hard_loss=0.2223, triplet_loss_num=16.0000, triplet_mean_dist=0.0199
+[2026-04-01 18:07:40] [INFO]: Iteration 00011, Cost 0.08s, triplet_loss=0.1679, triplet_hard_loss=0.2282, triplet_loss_num=15.7742, triplet_mean_dist=0.0360
+[2026-04-01 18:07:40] [INFO]: Iteration 00012, Cost 0.05s, triplet_loss=0.1737, triplet_hard_loss=0.2261, triplet_loss_num=15.9032, triplet_mean_dist=0.0305
+[2026-04-01 18:07:40] [INFO]: Iteration 00013, Cost 0.05s, triplet_loss=0.1831, triplet_hard_loss=0.2241, triplet_loss_num=16.0000, triplet_mean_dist=0.0274
+[2026-04-01 18:07:40] [INFO]: Iteration 00014, Cost 0.06s, triplet_loss=0.1844, triplet_hard_loss=0.2392, triplet_loss_num=15.9677, triplet_mean_dist=0.0282
+[2026-04-01 18:07:41] [INFO]: Iteration 00015, Cost 0.06s, triplet_loss=0.1809, triplet_hard_loss=0.2250, triplet_loss_num=15.9355, triplet_mean_dist=0.0277
+[2026-04-01 18:07:41] [INFO]: Iteration 00016, Cost 0.08s, triplet_loss=0.1746, triplet_hard_loss=0.2557, triplet_loss_num=15.2742, triplet_mean_dist=0.0459
+[2026-04-01 18:07:41] [INFO]: Iteration 00017, Cost 0.05s, triplet_loss=0.1739, triplet_hard_loss=0.1955, triplet_loss_num=16.0000, triplet_mean_dist=0.0230
+[2026-04-01 18:07:41] [INFO]: Iteration 00018, Cost 0.06s, triplet_loss=0.1852, triplet_hard_loss=0.2525, triplet_loss_num=16.0000, triplet_mean_dist=0.0327
+[2026-04-01 18:07:41] [INFO]: Iteration 00019, Cost 0.05s, triplet_loss=0.1735, triplet_hard_loss=0.2425, triplet_loss_num=15.4677, triplet_mean_dist=0.0388
+[2026-04-01 18:07:41] [INFO]: Iteration 00020, Cost 0.05s, triplet_loss=0.1851, triplet_hard_loss=0.2559, triplet_loss_num=16.0000, triplet_mean_dist=0.0390
+[rank0]:[W401 18:07:41.347703088 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+
+```
