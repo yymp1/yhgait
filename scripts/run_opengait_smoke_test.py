@@ -2,24 +2,32 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import socket
 import shlex
 import subprocess
 import tempfile
+import sys
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_PYTHON = Path.home() / ".venvs" / "person_orientation_demo" / "opengait_pretreatment" / "bin" / "python"
+SRC_ROOT = ROOT / "src"
+if str(SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT))
+
+from opengait_runtime import default_project_python  # noqa: E402
+
+DEFAULT_PYTHON = default_project_python("win11-demo")
 DEFAULT_OPENGAIT_ROOT = ROOT / "external" / "OpenGait"
 DEFAULT_CONFIG = ROOT / "configs" / "opengait_casiab_smoke.yaml"
 DEFAULT_REPORTS_DIR = ROOT / "reports"
+DEFAULT_ENTRY = ROOT / "scripts" / "run_opengait_main.py"
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="执行 OpenGait 最小训练 smoke test")
     parser.add_argument("--python-bin", default=str(DEFAULT_PYTHON), help="运行 OpenGait smoke test 的 Python")
+    parser.add_argument("--entry-script", default=str(DEFAULT_ENTRY), help="训练入口包装脚本")
     parser.add_argument("--opengait-root", default=str(DEFAULT_OPENGAIT_ROOT), help="OpenGait 仓库根目录")
     parser.add_argument("--config-path", default=str(DEFAULT_CONFIG), help="smoke test 配置文件")
     parser.add_argument("--reports-dir", default=str(DEFAULT_REPORTS_DIR), help="报告输出目录")
@@ -30,6 +38,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
 def main() -> None:
     args = build_arg_parser().parse_args()
     python_bin = normalize_python_bin(args.python_bin)
+    entry_script = normalize_python_bin(args.entry_script)
     opengait_root = Path(args.opengait_root).expanduser().resolve()
     config_path = Path(args.config_path).expanduser().resolve()
     reports_dir = Path(args.reports_dir).expanduser().resolve()
@@ -39,7 +48,7 @@ def main() -> None:
     import_check = run_import_check(python_bin)
     artifact_check = run_artifact_check(python_bin, opengait_root, config_path)
     data_check = run_data_smoke(python_bin, opengait_root, config_path)
-    entry_check = run_entry_smoke(python_bin, opengait_root, config_path, master_port=master_port)
+    entry_check = run_entry_smoke(python_bin, entry_script, opengait_root, config_path, master_port=master_port)
 
     report = {
         "python_bin": str(python_bin),
@@ -243,30 +252,23 @@ dist.destroy_process_group()
     return {"status": "passed", "result": json.loads(completed.stdout)}
 
 
-def run_entry_smoke(python_bin: Path, opengait_root: Path, config_path: Path, *, master_port: int) -> dict:
+def run_entry_smoke(python_bin: Path, entry_script: Path, opengait_root: Path, config_path: Path, *, master_port: int) -> dict:
     command = [
         str(python_bin),
-        "opengait/main.py",
-        "--cfgs",
+        str(entry_script),
+        "--cfg-path",
         str(config_path),
         "--phase",
         "train",
-        "--log_to_file",
+        "--log-to-file",
+        "--opengait-root",
+        str(opengait_root),
+        "--master-port",
+        str(master_port),
     ]
-    env = os.environ.copy()
-    env.update(
-        {
-            "MASTER_ADDR": "127.0.0.1",
-            "MASTER_PORT": str(master_port),
-            "WORLD_SIZE": "1",
-            "RANK": "0",
-            "LOCAL_RANK": "0",
-        }
-    )
     completed = subprocess.run(
         command,
         cwd=opengait_root,
-        env=env,
         check=False,
         capture_output=True,
         text=True,

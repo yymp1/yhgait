@@ -15,22 +15,48 @@
 4. 生成环境检查报告
 5. 启动 Gradio 页面
 
-## 先说清楚：Win11 这条路主要解决什么
+## 先说清楚：Win11 现在是主平台
 
-当前仓库在 Win11 上最适合完成的是：
+当前仓库现在已经把 Win11 单卡运行当成正式主线，而不是“只跑 GUI 的次级方案”。
+
+也就是说，Win11 现在不只负责：
 
 - 启动“私有步态库录入 / 识别” GUI
 - 上传视频，录入本地身份样本
 - 上传新视频，和本地私有步态库做 Top-K 识别
 
-当前仓库在 Win11 上**不建议**作为主目标的是：
+它也负责：
 
-- OpenGait 官方正式训练
-- 长时间训练 / 正式 benchmark
-- Linux + NCCL 那套正式训练工作流
+- OpenGait smoke test
+- 单卡 probe / short-run / baseline
+- `formal_conservative_real` 单卡训练
+- `formal_conservative_real` 单卡评估
+- 构建 gallery cache
 
-原因是当前 `external/OpenGait/opengait/main.py` 仍然是 Linux / NCCL 风格的官方训练入口。  
-本仓库已经为“本地视频推理 / 私有库 demo”补了 Windows 可用的包装，但这不等于“Windows 已经变成正式训练主机”。
+## 当前 Win11 的能力边界
+
+当前仓库现在最适合完成的是：
+
+- 启动“私有步态库录入 / 识别” GUI
+- 上传视频，录入本地身份样本
+- 上传新视频，和本地私有步态库做 Top-K 识别
+- OpenGait 单卡训练与评估
+- 单卡构建检索缓存
+
+当前仓库在 Win11 上**当前不主打**的是：
+
+- 多卡训练
+- Linux + NCCL 那套旧主线
+- 把 `external/OpenGait/opengait/main.py` 直接当成唯一入口
+
+原因是当前官方 `external/OpenGait/opengait/main.py` 仍然偏 Linux / NCCL 风格。  
+所以当前仓库已经补了自己的 Win11 单卡包装入口：
+
+- `scripts/run_opengait_main.py`
+- `scripts/start_win11_training.ps1`
+
+也就是说：  
+现在不是“Win11 不能训练”，而是“Win11 训练应该走本仓库的包装入口，不再直接裸跑旧入口”。
 
 ## 新电脑最少要带走什么
 
@@ -66,7 +92,21 @@ external/OpenGait/configs/
 external/OpenGait/output/CASIA-B/GaitSet/formal_conservative_real/checkpoints/formal_conservative_real-01000.pt
 ```
 
-这一项**必须从旧电脑拷过去**，脚本不会自动下载。
+如果你的目标包括：
+
+- 直接启动私有步态库 GUI
+- 用现成模型做识别
+- 用现成 `1000` iter checkpoint 做正式评估
+
+那么这一项**必须从旧电脑拷过去**，脚本不会自动下载。
+
+如果你只是想先从头开始跑：
+
+- smoke
+- probe
+- baseline
+
+那第一天可以先没有这份 checkpoint。
 
 建议把下面整个目录一起带走，这样最省事：
 
@@ -92,7 +132,7 @@ data/private_gallery/
 datasets/processed/CASIA-B-pkl/
 ```
 
-这份数据**不是启动 GUI 的必需项**，但会影响后续训练和官方评估。
+这份数据对 GUI 不是必需项，但对 Win11 训练 / 评估是必需项。
 
 ## 新电脑建议的目录形态
 
@@ -165,6 +205,21 @@ python app\gradio_gait_demo.py
 
 ```text
 http://127.0.0.1:7860
+```
+
+## 如果你后续还要在 Win11 上训练
+
+环境装好之后，直接看：
+
+- `docs/win11_training.md`
+
+常用入口是：
+
+```powershell
+.\scripts\start_win11_training.ps1 -Mode smoke
+.\scripts\start_win11_training.ps1 -Mode short-run
+.\scripts\start_win11_training.ps1 -Mode formal-train -ResumeIter 1000
+.\scripts\start_win11_training.ps1 -Mode formal-eval -CheckpointIter 1000
 ```
 
 ## 推荐的第一次执行命令

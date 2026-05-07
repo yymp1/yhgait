@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import os
 import pickle
-import socket
 import shutil
 import sys
 from dataclasses import dataclass
@@ -19,13 +18,18 @@ import torch
 from PIL import Image
 from torch.cuda.amp import autocast
 
+from opengait_runtime import (
+    OPENGAIT_ROOT,
+    add_opengait_to_path,
+    init_single_process_distributed,
+    preferred_distributed_backend as runtime_preferred_distributed_backend,
+    resolve_from_opengait_root as runtime_resolve_from_opengait_root,
+)
+
 ROOT = Path(__file__).resolve().parents[1]
-OPENGAIT_ROOT = ROOT / "external" / "OpenGait"
-OPENGAIT_PY_ROOT = OPENGAIT_ROOT / "opengait"
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
-if str(OPENGAIT_PY_ROOT) not in sys.path:
-    sys.path.insert(0, str(OPENGAIT_PY_ROOT))
+add_opengait_to_path(OPENGAIT_ROOT)
 
 import app as video_app  # noqa: E402
 from data.collate_fn import CollateFn  # noqa: E402
@@ -45,48 +49,15 @@ class VideoSilhouetteConfig:
 
 
 def ensure_single_process_env(master_port: int) -> None:
-    def pick_master_port(preferred_port: int) -> int:
-        if os.environ.get("MASTER_PORT"):
-            return int(os.environ["MASTER_PORT"])
-        probe = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        try:
-            probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            probe.bind(("127.0.0.1", int(preferred_port)))
-            return int(preferred_port)
-        except OSError:
-            pass
-        finally:
-            probe.close()
-
-        fallback = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        try:
-            fallback.bind(("127.0.0.1", 0))
-            return int(fallback.getsockname()[1])
-        finally:
-            fallback.close()
-
-    os.environ.setdefault("MASTER_ADDR", "127.0.0.1")
-    os.environ.setdefault("MASTER_PORT", str(pick_master_port(master_port)))
-    os.environ.setdefault("WORLD_SIZE", "1")
-    os.environ.setdefault("RANK", "0")
-    os.environ.setdefault("LOCAL_RANK", "0")
+    init_single_process_distributed(master_port)
 
 
 def preferred_distributed_backend() -> str:
-    if not torch.cuda.is_available():
-        return "gloo"
-    if sys.platform.startswith("win"):
-        return "gloo"
-    if not torch.distributed.is_nccl_available():
-        return "gloo"
-    return "nccl"
+    return runtime_preferred_distributed_backend()
 
 
 def resolve_from_opengait_root(path_text: str) -> str:
-    path = Path(path_text)
-    if path.is_absolute():
-        return str(path)
-    return str((OPENGAIT_ROOT / path).resolve())
+    return runtime_resolve_from_opengait_root(path_text, OPENGAIT_ROOT)
 
 
 def load_cfg(cfg_path: Path, checkpoint_iter: int) -> dict:
@@ -125,10 +96,7 @@ class OpenGaitFeatureExtractor:
                 " 如果你只想验证基础检测/跟踪流程，请改用 app.py；"
                 " 如果要跑完整录入/识别 demo，请先安装支持 CUDA 的 PyTorch。"
             )
-        ensure_single_process_env(master_port)
-        backend = preferred_distributed_backend()
-        if not torch.distributed.is_initialized():
-            torch.distributed.init_process_group(backend, init_method="env://")
+        backend = init_single_process_distributed(master_port)
 
         previous_cwd = Path.cwd()
         os.chdir(OPENGAIT_ROOT)
@@ -141,7 +109,10 @@ class OpenGaitFeatureExtractor:
             msg_mgr.log_info(model_cfg)
             model_class = getattr(models, model_cfg["model"])
             model = model_class(self.cfgs, training=False)
-            self.model = get_ddp_module(model, self.cfgs["trainer_cfg"]["find_unused_parameters"])
+            if torch.distributed.get_world_size() == 1:
+                self.model = model
+            else:
+                self.model = get_ddp_module(model, self.cfgs["trainer_cfg"]["find_unused_parameters"])
             msg_mgr.log_info(params_count(self.model))
             self.collate_fn = CollateFn(["video_probe"], self.cfgs["evaluator_cfg"]["sampler"])
         finally:

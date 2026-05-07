@@ -11,6 +11,7 @@ SRC_ROOT = ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
+from opengait_runtime import default_project_python  # noqa: E402
 from gait_demo_core import (  # noqa: E402
     PROBE_TYPES,
     find_probe_index,
@@ -47,7 +48,7 @@ def ensure_cache(cache_path: Path, cfg_path: Path, checkpoint_iter: int) -> None
     if cache_path.exists():
         return
     cmd = [
-        str(ROOT / ".venvs" / "opengait-gpu" / "bin" / "python"),
+        str(default_project_python("win11-demo")),
         str(ROOT / "scripts" / "build_gait_gallery.py"),
         "--cfg-path",
         str(cfg_path),

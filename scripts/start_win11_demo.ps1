@@ -233,6 +233,7 @@ Invoke-ExternalCommand -Exe $PythonExe -Args @(
     $GalleryAbsolutePath,
     "--write-json",
     $EnvCheckJson,
+    "--require-demo-checkpoint",
     "--strict"
 ) -WorkingDirectory $RepoRoot
 

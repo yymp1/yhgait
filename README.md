@@ -1,22 +1,23 @@
 # 私有步态库识别 / OpenGait Demo
 
-当前仓库的主流程已经切换为 Linux 上的“私有步态库录入 + 识别” demo。它复用真实 OpenGait checkpoint、真实视频前处理和 Gradio 页面，当前支持：
+当前仓库现在的主流程已经切换为 `Win11 + NVIDIA 单卡` 上的完整步态工作流。它复用真实 OpenGait checkpoint、真实视频前处理和 Gradio 页面，当前支持：
 
 1. 上传真实人物视频，自动检测 / 跟踪 / 提取 silhouette / 生成 gait embedding
 2. 以 `identity` 为单位录入自己的私有步态库
 3. 查看已录入 identity、样本数和样本基本信息
 4. 上传新视频，与自己的私有步态库做 Top-K 识别
-5. 保留 CASIA-B 训练、评估和数据集分析页作为辅助研究能力
+5. 在 Win11 上执行 OpenGait 单卡 smoke / probe / baseline / formal train / formal eval
+6. 构建 gallery cache，供检索 demo 和效果分析复用
 
-原始的 `macOS Apple Silicon` 人物背影/姿态工具链仍然保留，但它已经不是当前主入口。
+历史上的 Linux / macOS 路径仍然保留在仓库文档里作为旧记录，但它们已经不是当前主入口。
 
 ## 新手先看
 
-如果你的目标是“把这个项目迁到另一台 `Win11 + NVIDIA GPU` 电脑并跑起 GUI”，先不要从训练章节开始看，直接走这条路：
+如果你的目标是“把这个项目迁到另一台 `Win11 + NVIDIA GPU` 电脑并完整跑起来”，先不要从旧的 Linux 章节开始看，直接走这条路：
 
 1. 把当前项目目录复制到新电脑
 2. 确认新电脑上有 `external/OpenGait/`
-3. 确认新电脑上有默认 checkpoint：
+3. 如果你要直接跑 GUI 或现成模型评估，确认新电脑上有默认 checkpoint：
    `external/OpenGait/output/CASIA-B/GaitSet/formal_conservative_real/checkpoints/formal_conservative_real-01000.pt`
 4. 如果你还想保留旧样本库，再把 `data/private_gallery/` 一起复制过去
 5. 在 Win11 上双击 `scripts/start_win11_demo.bat`
@@ -30,6 +31,7 @@ Set-ExecutionPolicy -Scope Process Bypass
 更详细的新手版迁移说明见：
 
 - `docs/win11_deployment.md`
+- `docs/win11_training.md`
 
 ## 先理解两条运行路径
 
@@ -50,27 +52,35 @@ Set-ExecutionPolicy -Scope Process Bypass
 
 这条路不依赖 OpenGait checkpoint，更适合做最基础的视频预处理验证。
 
-### 2. 完整私有步态库 demo
+### 2. 完整私有步态库 demo + Win11 单卡训练主线
 
 入口：
 
 - `app/gradio_gait_demo.py`
+- `scripts/run_opengait_main.py`
+- `scripts/start_win11_training.ps1`
 
 能做的事：
 
 - 真实视频 -> track -> silhouette -> gait embedding
 - 录入本地私有步态库
 - 上传新视频做 Top-K 识别
+- OpenGait 单卡训练
+- OpenGait 单卡评估
+- 构建 gallery cache
 
 这条路依赖：
 
 - `external/OpenGait/` 代码
-- 已训练好的 checkpoint
+- `datasets/processed/CASIA-B-pkl`
 - 可用 CUDA GPU
 
-如果你是 Win11 新机器迁移，通常你真正想跑的是这第二条。
+如果你是 Win11 新机器迁移，通常你真正想跑的是这第二条，而且后续维护也围绕这条展开。
 
-## 当前 Linux 主线状态（2026-04-02）
+## 历史 Linux 训练记录（归档）
+
+下面这部分是之前在 Linux 上做过的真实训练 / 评估记录，保留它主要是为了追溯实验过程。  
+当前真正推荐继续维护和操作的主线，是前面提到的 Win11 单卡部署、训练和 GUI 流程。
 
 - 真实 `CASIA-B silhouette` 已通过官方链接下载到 `downloads/GaitDatasetB-silh.zip`
 - 原始数据已解压并整理到 `datasets/external/casia_b`
@@ -143,6 +153,9 @@ Set-ExecutionPolicy -Scope Process Bypass
 - `scripts/check_windows_demo_env.py`：Win11 本地环境检查
 - `scripts/start_win11_demo.ps1`：Win11 一键部署并启动 demo
 - `scripts/start_win11_demo.bat`：Win11 双击启动入口
+- `scripts/run_opengait_main.py`：Win11 单卡训练 / 评估统一入口
+- `scripts/start_win11_training.ps1`：Win11 单卡训练启动入口
+- `scripts/start_win11_training.bat`：Win11 单卡训练双击入口
 - `scripts/setup_opengait_pretreatment_env.py`：创建 OpenGait pretreatment 专用最小 Python 环境
 - `scripts/run_opengait_pretreatment.py`：生成或执行外部 OpenGait pretreatment 命令
 - `scripts/preflight_opengait_pretreatment.py`：pretreatment 真执行前的一键预检入口
@@ -150,6 +163,7 @@ Set-ExecutionPolicy -Scope Process Bypass
 - `datasets/external/`：公开 gait 数据集预留目录
 - `datasets/processed/`：公开数据集 pretreatment 输出目录
 - `docs/win11_deployment.md`：Win11 新电脑迁移和部署说明
+- `docs/win11_training.md`：Win11 单卡训练和评估说明
 - `samples/`：输入视频目录
 - `outputs/`：输出视频目录
 
@@ -193,6 +207,29 @@ scripts/start_win11_demo.bat
 更完整的迁移细节、目录清单和排错方式见：
 
 - `docs/win11_deployment.md`
+
+## Win11 单卡训练（当前主线）
+
+Win11 现在不只是跑 GUI，也支持把训练和评估完整收在一台单卡机器上。
+
+最常用的训练入口：
+
+```powershell
+.\scripts\start_win11_training.ps1 -Mode smoke
+.\scripts\start_win11_training.ps1 -Mode short-run
+.\scripts\start_win11_training.ps1 -Mode formal-train -ResumeIter 1000
+.\scripts\start_win11_training.ps1 -Mode formal-eval -CheckpointIter 1000
+```
+
+如果你更想直接调用底层包装入口，也可以：
+
+```powershell
+.\.venvs\win11-demo\Scripts\python.exe .\scripts\run_opengait_main.py --cfg-path .\configs\opengait_casiab_formal_conservative.yaml --phase train --opengait-root .\external\OpenGait --master-port 29531 --num-workers 0 --log-to-file
+```
+
+训练主线说明见：
+
+- `docs/win11_training.md`
 
 ## 完整私有步态库 Demo 手工启动
 

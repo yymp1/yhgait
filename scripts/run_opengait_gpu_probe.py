@@ -6,6 +6,7 @@ import os
 import shlex
 import socket
 import subprocess
+import sys
 import time
 from pathlib import Path
 
@@ -13,15 +14,23 @@ import yaml
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_PYTHON = ROOT / ".venvs" / "opengait-gpu" / "bin" / "python"
+SRC_ROOT = ROOT / "src"
+if str(SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT))
+
+from opengait_runtime import default_project_python  # noqa: E402
+
+DEFAULT_PYTHON = default_project_python("win11-demo")
 DEFAULT_OPENGAIT_ROOT = ROOT / "external" / "OpenGait"
-DEFAULT_CONFIG = ROOT / "configs" / "opengait_casiab_smoke.yaml"
+DEFAULT_CONFIG = ROOT / "configs" / "opengait_casiab_baseline_small.yaml"
 DEFAULT_REPORTS_DIR = ROOT / "reports"
+DEFAULT_ENTRY = ROOT / "scripts" / "run_opengait_main.py"
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="基于真实 CASIA-B-pkl 执行 OpenGait GPU probe / short-run")
     parser.add_argument("--python-bin", default=str(DEFAULT_PYTHON), help="运行 OpenGait 的 Python")
+    parser.add_argument("--entry-script", default=str(DEFAULT_ENTRY), help="训练入口包装脚本")
     parser.add_argument("--opengait-root", default=str(DEFAULT_OPENGAIT_ROOT), help="OpenGait 仓库根目录")
     parser.add_argument("--config-path", default=str(DEFAULT_CONFIG), help="基础配置文件")
     parser.add_argument("--reports-dir", default=str(DEFAULT_REPORTS_DIR), help="报告输出目录")
@@ -45,6 +54,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
 def main() -> None:
     args = build_arg_parser().parse_args()
     python_bin = normalize_path(args.python_bin)
+    entry_script = normalize_path(args.entry_script)
     opengait_root = normalize_path(args.opengait_root)
     config_path = normalize_path(args.config_path)
     reports_dir = normalize_path(args.reports_dir)
@@ -83,28 +93,21 @@ def main() -> None:
 
     command = [
         str(python_bin),
-        "opengait/main.py",
-        "--cfgs",
+        str(entry_script),
+        "--cfg-path",
         str(runtime_config_path),
         "--phase",
         "train",
-        "--log_to_file",
+        "--log-to-file",
+        "--opengait-root",
+        str(opengait_root),
+        "--master-port",
+        str(master_port),
     ]
-    env = os.environ.copy()
-    env.update(
-        {
-            "MASTER_ADDR": "127.0.0.1",
-            "MASTER_PORT": str(master_port),
-            "WORLD_SIZE": "1",
-            "RANK": "0",
-            "LOCAL_RANK": "0",
-        }
-    )
     start_time = time.time()
     completed = subprocess.run(
         command,
         cwd=opengait_root,
-        env=env,
         check=False,
         capture_output=True,
         text=True,

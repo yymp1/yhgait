@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CFG_PATH = ROOT / "configs" / "opengait_casiab_formal_conservative_eval.yaml"
 DEFAULT_GALLERY_ROOT = ROOT / "data" / "private_gallery"
 DEFAULT_JSON_PATH = ROOT / "reports" / "windows_env_check.json"
+DEFAULT_TRAIN_ENTRY = ROOT / "scripts" / "run_opengait_main.py"
 REQUIRED_IMPORTS = [
     ("cv2", "cv2"),
     ("numpy", "numpy"),
@@ -42,6 +43,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--checkpoint-iter", type=int, default=1000, help="默认检查的 checkpoint iter。")
     parser.add_argument("--gallery-root", default=str(DEFAULT_GALLERY_ROOT), help="私有步态库根目录。")
     parser.add_argument("--write-json", default=str(DEFAULT_JSON_PATH), help="可选：输出 JSON 报告路径。")
+    parser.add_argument("--require-demo-checkpoint", action="store_true", help="把 GUI/demo 默认 checkpoint 视为必需项。")
     parser.add_argument("--strict", action="store_true", help="如果存在阻塞项则返回非 0。")
     return parser
 
@@ -162,10 +164,11 @@ def build_report(args: argparse.Namespace) -> dict[str, Any]:
         "cfg_path": to_path_status(cfg_path),
         "reports_dir": to_path_status(reports_dir, required=False),
         "gallery_root": to_path_status(gallery_root, required=False),
+        "train_entry": to_path_status(DEFAULT_TRAIN_ENTRY),
         "opengait_root": to_path_status(opengait_root),
         "opengait_main": to_path_status(opengait_root / "opengait" / "main.py"),
         "opengait_default_cfg": to_path_status(opengait_root / "configs" / "default.yaml"),
-        "checkpoint": to_path_status(checkpoint_path),
+        "checkpoint": to_path_status(checkpoint_path, required=bool(args.require_demo_checkpoint)),
         "dataset_pkl_root": to_path_status(datasets_root, required=False),
         "yolo_weight": to_path_status(repo_root / "yolov8n.pt", required=False),
     }
@@ -198,9 +201,18 @@ def build_report(args: argparse.Namespace) -> dict[str, Any]:
         if sys.platform.startswith("win") and not torch_info.get("gloo_available"):
             issues.append("当前 PyTorch 未提供 Gloo 分布式后端，Windows 上无法初始化 OpenGait 推理。")
 
-    for name in ("repo_root", "cfg_path", "opengait_root", "opengait_main", "opengait_default_cfg", "checkpoint"):
+    required_paths = ["repo_root", "cfg_path", "train_entry", "opengait_root", "opengait_main", "opengait_default_cfg"]
+    if args.require_demo_checkpoint:
+        required_paths.append("checkpoint")
+    for name in required_paths:
         if not path_report[name]["exists"]:
             issues.append(f"缺少必需路径：{path_report[name]['path']}")
+
+    if not args.require_demo_checkpoint and not path_report["checkpoint"]["exists"]:
+        warnings.append(
+            "当前未发现 GUI/demo 默认 checkpoint。"
+            " 这不会阻塞从头训练，但会影响私有步态库 GUI 和基于现成模型的推理。"
+        )
 
     if not path_report["yolo_weight"]["exists"]:
         warnings.append("未找到 yolov8n.pt，首次运行时会自动下载。")

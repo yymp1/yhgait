@@ -10,10 +10,17 @@ import numpy as np
 import torch
 
 ROOT = Path(__file__).resolve().parents[1]
+SRC_ROOT = ROOT / "src"
 OPENGAIT_ROOT = ROOT / "external" / "OpenGait"
 OPENGAIT_PY_ROOT = OPENGAIT_ROOT / "opengait"
+if str(SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT))
 if str(OPENGAIT_PY_ROOT) not in sys.path:
     sys.path.insert(0, str(OPENGAIT_PY_ROOT))
+
+from opengait_runtime import add_opengait_to_path, init_single_process_distributed  # noqa: E402
+
+add_opengait_to_path(OPENGAIT_ROOT)
 
 from modeling import models  # noqa: E402
 from utils import config_loader, get_ddp_module, get_msg_mgr, init_seeds, params_count  # noqa: E402
@@ -52,11 +59,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def ensure_single_process_env(master_port: int) -> None:
-    os.environ.setdefault("MASTER_ADDR", "127.0.0.1")
-    os.environ.setdefault("MASTER_PORT", str(master_port))
-    os.environ.setdefault("WORLD_SIZE", "1")
-    os.environ.setdefault("RANK", "0")
-    os.environ.setdefault("LOCAL_RANK", "0")
+    init_single_process_distributed(master_port)
 
 
 def resolve_from_opengait_root(path_text: str) -> str:
@@ -101,7 +104,8 @@ def build_model(cfgs: dict, log_to_file: bool):
     msg_mgr.log_info(model_cfg)
     model_class = getattr(models, model_cfg["model"])
     model = model_class(cfgs, training=False)
-    model = get_ddp_module(model, cfgs["trainer_cfg"]["find_unused_parameters"])
+    if torch.distributed.get_world_size() > 1:
+        model = get_ddp_module(model, cfgs["trainer_cfg"]["find_unused_parameters"])
     msg_mgr.log_info(params_count(model))
     msg_mgr.log_info("Feature Cache Model Initialization Finished!")
     return model
@@ -159,8 +163,6 @@ def main() -> int:
     cfg_path = Path(args.cfg_path)
     cache_path = Path(args.cache_path).resolve()
     ensure_single_process_env(args.master_port)
-    if not torch.distributed.is_initialized():
-        torch.distributed.init_process_group("nccl", init_method="env://")
     previous_cwd = Path.cwd()
     os.chdir(OPENGAIT_ROOT)
     try:
