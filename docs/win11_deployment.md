@@ -15,6 +15,44 @@
 4. 生成环境检查报告
 5. 启动 Gradio 页面
 
+## 先把分支拉对
+
+当前 Win11 主线改造在这个分支上：
+
+```text
+feature/win11-single-gpu-mainline
+```
+
+如果 Win11 电脑上还没有仓库，推荐这样拉：
+
+```powershell
+git clone git@github.com:yymp1/yhgait.git D:\gait\yhgait
+cd D:\gait\yhgait
+git fetch origin
+git switch --track origin/feature/win11-single-gpu-mainline
+```
+
+如果 Win11 电脑上已经有仓库，推荐这样切过去：
+
+```powershell
+cd D:\gait\yhgait
+git fetch origin
+git switch feature/win11-single-gpu-mainline
+git pull --ff-only
+```
+
+确认当前分支：
+
+```powershell
+git branch --show-current
+```
+
+你应该看到：
+
+```text
+feature/win11-single-gpu-mainline
+```
+
 ## 先说清楚：Win11 现在是主平台
 
 当前仓库现在已经把 Win11 单卡运行当成正式主线，而不是“只跑 GUI 的次级方案”。
@@ -212,6 +250,7 @@ http://127.0.0.1:7860
 环境装好之后，直接看：
 
 - `docs/win11_training.md`
+- `docs/win11_first_smoke_checklist.md`
 
 常用入口是：
 
@@ -231,6 +270,10 @@ http://127.0.0.1:7860
 ```
 
 这样可以强制重建环境，避免旧环境残留。
+
+如果你准备做“这台 Win11 机能不能正式接手后续工作”的第一轮验收，直接按这个清单走：
+
+- `docs/win11_first_smoke_checklist.md`
 
 ## 常用参数
 

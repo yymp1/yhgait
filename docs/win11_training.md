@@ -5,6 +5,7 @@
 如果你还没完成环境部署，先看：
 
 - `docs/win11_deployment.md`
+- `docs/win11_first_smoke_checklist.md`
 
 当前仓库现在把 Win11 视为主平台，训练和评估统一走仓库自己的包装入口：
 
@@ -221,3 +222,9 @@ scripts/run_opengait_main.py
 5. `.\scripts\start_win11_training.ps1 -Mode formal-eval -CheckpointIter 1000`
 6. `.\scripts\start_win11_training.ps1 -Mode build-gallery -CheckpointIter 1000`
 7. `.\scripts\start_win11_demo.ps1`
+
+## 合并前建议再做一次什么
+
+如果你准备把这条 Win11 主线分支继续推进、甚至后面考虑合并，建议按这份清单做第一轮收口：
+
+- `docs/win11_first_smoke_checklist.md`

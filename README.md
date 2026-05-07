@@ -32,6 +32,7 @@ Set-ExecutionPolicy -Scope Process Bypass
 
 - `docs/win11_deployment.md`
 - `docs/win11_training.md`
+- `docs/win11_first_smoke_checklist.md`
 
 ## 先理解两条运行路径
 
@@ -230,6 +231,7 @@ Win11 现在不只是跑 GUI，也支持把训练和评估完整收在一台单�
 训练主线说明见：
 
 - `docs/win11_training.md`
+- `docs/win11_first_smoke_checklist.md`
 
 ## 完整私有步态库 Demo 手工启动
 
