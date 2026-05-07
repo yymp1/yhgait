@@ -52,6 +52,13 @@ output/
 downloads/
 reports/*.npz
 reports/gait_demo_analysis_iter*.json
+reports/private_gallery_enroll_runs/
+reports/private_gallery_enroll_runs_validation/
+reports/private_gallery_identify_runs/
+reports/private_gallery_identify_runs_validation/
+reports/private_gallery_runs/
+reports/private_gallery_recognition_runs_validation/
+reports/private_gallery_validation_result.json
 reports/real_video_demo_runs/
 reports/*/*.mp4
 reports/*/*.npy

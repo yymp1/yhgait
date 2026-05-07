@@ -1,0 +1,136 @@
+{
+  "python_bin": "/home/bb/gait/yhgait/.venvs/opengait-cpu/bin/python",
+  "opengait_root": "/home/bb/gait/yhgait/external/OpenGait",
+  "config_path": "/home/bb/gait/yhgait/configs/opengait_casiab_smoke.yaml",
+  "master_port": 29531,
+  "import_check": {
+    "status": "passed",
+    "modules": {
+      "torch": {
+        "status": "ok",
+        "version": "2.11.0+cpu"
+      },
+      "yaml": {
+        "status": "ok",
+        "version": "6.0.3"
+      },
+      "tensorboard": {
+        "status": "ok",
+        "version": "2.20.0"
+      },
+      "torchvision": {
+        "status": "ok",
+        "version": "0.26.0+cpu"
+      },
+      "einops": {
+        "status": "ok",
+        "version": "0.8.2"
+      },
+      "kornia": {
+        "status": "ok",
+        "version": "0.8.2"
+      },
+      "matplotlib": {
+        "status": "ok",
+        "version": "3.10.8"
+      },
+      "imageio": {
+        "status": "ok",
+        "version": "2.37.3"
+      },
+      "sklearn": {
+        "status": "ok",
+        "version": "1.7.2"
+      },
+      "cv2": {
+        "status": "ok",
+        "version": "4.13.0"
+      },
+      "numpy": {
+        "status": "ok",
+        "version": "2.2.6"
+      },
+      "tqdm": {
+        "status": "ok",
+        "version": "4.67.3"
+      }
+    }
+  },
+  "artifact_check": {
+    "status": "passed",
+    "result": {
+      "dataset_root": "/home/bb/gait/yhgait/datasets/processed/CASIA-B-pkl",
+      "subject_count": 3,
+      "type_count": 1,
+      "view_count": 1,
+      "pkl_count": 3,
+      "samples": [
+        {
+          "path": "/home/bb/gait/yhgait/datasets/processed/CASIA-B-pkl/001/nm-01/000/000.pkl",
+          "shape": [
+            16,
+            64,
+            64
+          ],
+          "dtype": "uint8"
+        },
+        {
+          "path": "/home/bb/gait/yhgait/datasets/processed/CASIA-B-pkl/002/nm-01/000/000.pkl",
+          "shape": [
+            18,
+            64,
+            64
+          ],
+          "dtype": "uint8"
+        },
+        {
+          "path": "/home/bb/gait/yhgait/datasets/processed/CASIA-B-pkl/075/nm-01/000/000.pkl",
+          "shape": [
+            20,
+            64,
+            64
+          ],
+          "dtype": "uint8"
+        }
+      ]
+    }
+  },
+  "data_smoke": {
+    "status": "passed",
+    "result": {
+      "train_seq_count": 2,
+      "test_seq_count": 1,
+      "label_count": 2,
+      "sample_seq_info": [
+        "001",
+        "nm-01",
+        "000",
+        [
+          "../../datasets/processed/CASIA-B-pkl/001/nm-01/000/000.pkl"
+        ]
+      ],
+      "batch_feature_shapes": [
+        [
+          [
+            8,
+            64,
+            64
+          ],
+          [
+            8,
+            64,
+            64
+          ]
+        ]
+      ],
+      "batch_label_count": 2,
+      "batch_seqL": null
+    }
+  },
+  "entry_smoke": {
+    "status": "failed",
+    "returncode": 1,
+    "command": "/home/bb/gait/yhgait/.venvs/opengait-cpu/bin/python opengait/main.py --cfgs /home/bb/gait/yhgait/configs/opengait_casiab_smoke.yaml --phase train --log_to_file",
+    "output": "xFormers not available\nxFormers not available\n/home/bb/gait/yhgait/.venvs/opengait-cpu/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py:1788: UserWarning: Attempted to get default timeout for nccl backend, but NCCL support is not compiled\n  timeout = _get_default_timeout(backend)\nTraceback (most recent call last):\n  File \"/home/bb/gait/yhgait/external/OpenGait/opengait/main.py\", line 62, in <module>\n    torch.distributed.init_process_group('nccl', init_method='env://')\n  File \"/home/bb/gait/yhgait/.venvs/opengait-cpu/lib/python3.10/site-packages/torch/distributed/c10d_logger.py\", line 83, in wrapper\n    return func(*args, **kwargs)\n  File \"/home/bb/gait/yhgait/.venvs/opengait-cpu/lib/python3.10/site-packages/torch/distributed/c10d_logger.py\", line 97, in wrapper\n    func_return = func(*args, **kwargs)\n  File \"/home/bb/gait/yhgait/.venvs/opengait-cpu/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py\", line 1838, in init_process_group\n    default_pg, _ = _new_process_group_helper(\n  File \"/home/bb/gait/yhgait/.venvs/opengait-cpu/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py\", line 2099, in _new_process_group_helper\n    raise RuntimeError(\"Distributed package doesn't have NCCL built in\")\nRuntimeError: Distributed package doesn't have NCCL built in\n"
+  }
+}

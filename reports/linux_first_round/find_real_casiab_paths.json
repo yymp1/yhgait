@@ -1,0 +1,27 @@
+{
+  "searched_roots": [
+    "/home/bb/gait/yhgait",
+    "/home/bb",
+    "/mnt",
+    "/media",
+    "/srv",
+    "/opt"
+  ],
+  "candidate_pkl_roots": [
+    {
+      "path": "/home/bb/gait/yhgait/datasets/processed/CASIA-B-pkl",
+      "subject_count": 3,
+      "type_count": 1,
+      "view_count": 1,
+      "pkl_count": 3,
+      "sample_paths": [
+        "/home/bb/gait/yhgait/datasets/processed/CASIA-B-pkl/001/nm-01/000/000.pkl",
+        "/home/bb/gait/yhgait/datasets/processed/CASIA-B-pkl/002/nm-01/000/000.pkl",
+        "/home/bb/gait/yhgait/datasets/processed/CASIA-B-pkl/075/nm-01/000/000.pkl"
+      ],
+      "classification": "synthetic_or_incomplete"
+    }
+  ],
+  "candidate_raw_roots": [],
+  "candidate_archives": []
+}

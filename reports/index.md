@@ -1,7 +1,15 @@
-# Linux 训练推进索引
+# 当前交付索引
 
 ## 当前收口优先看
 
+- `reports/gui_copy_refresh.md`
+- `reports/private_gallery_setup.md`
+- `reports/private_gallery_schema.md`
+- `reports/private_gallery_validation.md`
+- `reports/private_gallery_scope.md`
+- `reports/private_gallery_recognition_flow.md`
+- `reports/effect_analysis_summary.md`
+- `reports/private_gallery_next_steps.md`
 - `reports/real_video_demo_setup.md`
 - `reports/real_video_demo_validation.md`
 - `reports/real_video_demo_scope.md`
@@ -22,6 +30,17 @@
 - `reports/formal_conservative_assessment.md`
 - `reports/opengait_training_readiness.md`
 - `README.md`
+
+## 私有步态库 Demo
+
+- `reports/gui_copy_refresh.md`
+- `reports/private_gallery_setup.md`
+- `reports/private_gallery_schema.md`
+- `reports/private_gallery_validation.md`
+- `reports/private_gallery_scope.md`
+- `reports/private_gallery_recognition_flow.md`
+- `reports/effect_analysis_summary.md`
+- `reports/private_gallery_next_steps.md`
 
 ## 最先看
 

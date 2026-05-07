@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import pickle
+import socket
 import shutil
 import sys
 from dataclasses import dataclass
@@ -32,6 +33,7 @@ from modeling import models  # noqa: E402
 from utils import config_loader, get_ddp_module, get_msg_mgr, init_seeds, params_count, ts2np  # noqa: E402
 
 from gait_demo_core import make_sequence_strip_from_array, retrieve_embedding_topk
+from private_gallery_core import load_private_gallery_index, match_private_gallery
 
 
 @dataclass(slots=True)
@@ -43,11 +45,41 @@ class VideoSilhouetteConfig:
 
 
 def ensure_single_process_env(master_port: int) -> None:
+    def pick_master_port(preferred_port: int) -> int:
+        if os.environ.get("MASTER_PORT"):
+            return int(os.environ["MASTER_PORT"])
+        probe = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            probe.bind(("127.0.0.1", int(preferred_port)))
+            return int(preferred_port)
+        except OSError:
+            pass
+        finally:
+            probe.close()
+
+        fallback = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            fallback.bind(("127.0.0.1", 0))
+            return int(fallback.getsockname()[1])
+        finally:
+            fallback.close()
+
     os.environ.setdefault("MASTER_ADDR", "127.0.0.1")
-    os.environ.setdefault("MASTER_PORT", str(master_port))
+    os.environ.setdefault("MASTER_PORT", str(pick_master_port(master_port)))
     os.environ.setdefault("WORLD_SIZE", "1")
     os.environ.setdefault("RANK", "0")
     os.environ.setdefault("LOCAL_RANK", "0")
+
+
+def preferred_distributed_backend() -> str:
+    if not torch.cuda.is_available():
+        return "gloo"
+    if sys.platform.startswith("win"):
+        return "gloo"
+    if not torch.distributed.is_nccl_available():
+        return "gloo"
+    return "nccl"
 
 
 def resolve_from_opengait_root(path_text: str) -> str:
@@ -87,8 +119,14 @@ class OpenGaitFeatureExtractor:
     def __init__(self, cfg_path: str | Path, checkpoint_iter: int, master_port: int = 29741) -> None:
         self.cfg_path = Path(cfg_path).resolve()
         self.checkpoint_iter = int(checkpoint_iter)
+        if not torch.cuda.is_available():
+            raise RuntimeError(
+                "当前私有步态库 demo 的 OpenGait 特征提取需要可用 CUDA GPU。"
+                " 如果你只想验证基础检测/跟踪流程，请改用 app.py；"
+                " 如果要跑完整录入/识别 demo，请先安装支持 CUDA 的 PyTorch。"
+            )
         ensure_single_process_env(master_port)
-        backend = "nccl" if torch.cuda.is_available() else "gloo"
+        backend = preferred_distributed_backend()
         if not torch.distributed.is_initialized():
             torch.distributed.init_process_group(backend, init_method="env://")
 
@@ -312,6 +350,34 @@ def build_run_dir(base_dir: Path, source_video: Path) -> Path:
     return base_dir / f"{safe_stem(source_video)}_{timestamp}"
 
 
+def build_track_record(summary: Any) -> dict[str, Any]:
+    track_id = f"{summary.track_id:04d}"
+    return {
+        "track_id": track_id,
+        "status": "skipped",
+        "quality_note": "export_filtered",
+        "frame_count": int(summary.frame_count),
+        "avg_bbox_area": float(summary.avg_bbox_area),
+        "avg_confidence": float(summary.avg_confidence),
+        "first_frame_idx": summary.first_frame_idx,
+        "last_frame_idx": summary.last_frame_idx,
+        "crop_dir": str(summary.crop_dir) if summary.crop_dir else "",
+        "clip_path": str(summary.clip_path) if summary.clip_path else "",
+        "silhouette_pkl": "",
+        "silhouette_strip": "",
+        "embedding_path": "",
+        "used_frames": 0,
+        "valid_frames": 0,
+        "rows": [],
+        "gallery_count": 0,
+        "top1_subject": "",
+        "top1_identity": "",
+        "top1_distance": None,
+        "review_required": False,
+        "review_reasons": [],
+    }
+
+
 def choose_best_track(tracks: list[dict[str, Any]]) -> str | None:
     candidates = [track for track in tracks if track["status"] == "ok"]
     if not candidates:
@@ -330,16 +396,12 @@ def choose_best_track(tracks: list[dict[str, Any]]) -> str | None:
     return str(candidates[0]["track_id"])
 
 
-def process_real_video_demo(
+def process_video_to_tracks(
     *,
     video_path: str | Path,
-    gallery_cache: dict[str, Any],
     cfg_path: str | Path,
     checkpoint_iter: int,
     run_root: str | Path,
-    topk: int = 5,
-    gallery_view: str | None = None,
-    expected_subject: str | None = None,
     detection_device: str | None = None,
     yolo_model: str = "yolov8n.pt",
     det_conf: float = 0.35,
@@ -363,13 +425,14 @@ def process_real_video_demo(
     annotated_video = run_dir / "annotated_result.mp4"
     artifacts_dir = run_dir / "artifacts"
 
+    device_name = detection_device or default_detection_device()
     summaries = video_app.process_video(
         input_path=input_copy,
         output_path=annotated_video,
         model_path=yolo_model,
         det_conf=det_conf,
         pose_conf=pose_conf,
-        device=detection_device or default_detection_device(),
+        device=device_name,
         enable_tracking=True,
         export_tracks=True,
         export_format="both",
@@ -392,32 +455,12 @@ def process_real_video_demo(
     tracks: list[dict[str, Any]] = []
     try:
         for summary in summaries:
-            track_id = f"{summary.track_id:04d}"
-            track_record = {
-                "track_id": track_id,
-                "status": "skipped",
-                "quality_note": "export_filtered",
-                "frame_count": int(summary.frame_count),
-                "avg_bbox_area": float(summary.avg_bbox_area),
-                "avg_confidence": float(summary.avg_confidence),
-                "first_frame_idx": summary.first_frame_idx,
-                "last_frame_idx": summary.last_frame_idx,
-                "crop_dir": str(summary.crop_dir) if summary.crop_dir else "",
-                "clip_path": str(summary.clip_path) if summary.clip_path else "",
-                "silhouette_pkl": "",
-                "silhouette_strip": "",
-                "used_frames": 0,
-                "valid_frames": 0,
-                "rows": [],
-                "gallery_count": 0,
-                "top1_subject": "",
-                "top1_distance": None,
-            }
+            track_record = build_track_record(summary)
             if not summary.kept or summary.crop_dir is None:
                 tracks.append(track_record)
                 continue
 
-            track_output_dir = run_dir / "probe_tracks" / track_id
+            track_output_dir = run_dir / "probe_tracks" / track_record["track_id"]
             sil_result = segmenter.build_track_sequence(summary.crop_dir, track_output_dir)
             track_record.update(
                 {
@@ -435,49 +478,232 @@ def process_real_video_demo(
 
             embedding = feature_extractor.embed_sequence(
                 sil_result["sequence"],
-                seq_type=f"video_track_{track_id}",
+                seq_type=f"video_track_{track_record['track_id']}",
                 view="video",
             )
-            np.save(track_output_dir / "embedding.npy", embedding)
-            result = retrieve_embedding_topk(
-                gallery_cache,
-                embedding,
-                topk=topk,
-                gallery_view=gallery_view,
-                expected_subject=expected_subject,
-                probe_meta={
-                    "key": f"video_track_{track_id}",
-                    "pkl_path": sil_result["silhouette_pkl"],
-                    "type": "video_probe",
-                    "view": "video",
-                },
-            )
+            embedding_path = track_output_dir / "embedding.npy"
+            np.save(embedding_path, embedding)
             track_record.update(
                 {
                     "status": "ok",
                     "quality_note": "ok",
-                    "rows": result["rows"],
-                    "gallery_count": int(result["gallery_count"]),
-                    "top1_subject": result["rows"][0]["subject_id"] if result["rows"] else "",
-                    "top1_distance": result["rows"][0]["distance"] if result["rows"] else None,
+                    "embedding_path": str(embedding_path),
                 }
             )
             tracks.append(track_record)
     finally:
         segmenter.close()
 
-    selected_track_id = choose_best_track(tracks)
     session = {
         "run_dir": str(run_dir),
         "input_video": str(input_copy),
         "annotated_video": str(annotated_video),
-        "gallery_view": "all" if gallery_view is None else str(gallery_view),
-        "expected_subject": "" if expected_subject is None else str(expected_subject),
         "checkpoint_iter": int(checkpoint_iter),
+        "detection_device": str(device_name),
         "tracks": tracks,
-        "selected_track_id": selected_track_id,
+        "selected_track_id": choose_best_track(tracks),
+        "mode": "tracks_only",
     }
-    (run_dir / "session_summary.json").write_text(
+    (Path(session["run_dir"]) / "session_summary.json").write_text(
+        json.dumps(session, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    return session
+
+
+def process_real_video_demo(
+    *,
+    video_path: str | Path,
+    gallery_cache: dict[str, Any],
+    cfg_path: str | Path,
+    checkpoint_iter: int,
+    run_root: str | Path,
+    topk: int = 5,
+    gallery_view: str | None = None,
+    expected_subject: str | None = None,
+    detection_device: str | None = None,
+    yolo_model: str = "yolov8n.pt",
+    det_conf: float = 0.35,
+    pose_conf: float = 0.4,
+    min_track_frames: int = 20,
+    min_bbox_size: int = 64,
+    min_track_confidence: float = 0.30,
+    mask_threshold: float = 0.55,
+    min_mask_ratio: float = 0.03,
+    min_valid_frames: int = 16,
+) -> dict[str, Any]:
+    session = process_video_to_tracks(
+        video_path=video_path,
+        cfg_path=cfg_path,
+        checkpoint_iter=checkpoint_iter,
+        run_root=run_root,
+        detection_device=detection_device,
+        yolo_model=yolo_model,
+        det_conf=det_conf,
+        pose_conf=pose_conf,
+        min_track_frames=min_track_frames,
+        min_bbox_size=min_bbox_size,
+        min_track_confidence=min_track_confidence,
+        mask_threshold=mask_threshold,
+        min_mask_ratio=min_mask_ratio,
+        min_valid_frames=min_valid_frames,
+    )
+
+    for track_record in session["tracks"]:
+        if track_record["status"] != "ok" or not track_record.get("embedding_path"):
+            continue
+        embedding = np.load(track_record["embedding_path"])
+        result = retrieve_embedding_topk(
+            gallery_cache,
+            embedding,
+            topk=topk,
+            gallery_view=gallery_view,
+            expected_subject=expected_subject,
+            probe_meta={
+                "key": f"video_track_{track_record['track_id']}",
+                "pkl_path": track_record["silhouette_pkl"],
+                "type": "video_probe",
+                "view": "video",
+            },
+        )
+        track_record.update(
+            {
+                "rows": result["rows"],
+                "gallery_count": int(result["gallery_count"]),
+                "top1_subject": result["rows"][0]["subject_id"] if result["rows"] else "",
+                "top1_distance": result["rows"][0]["distance"] if result["rows"] else None,
+            }
+        )
+
+    session.update(
+        {
+            "gallery_view": "all" if gallery_view is None else str(gallery_view),
+            "expected_subject": "" if expected_subject is None else str(expected_subject),
+            "mode": "dataset_retrieval",
+        }
+    )
+    (Path(session["run_dir"]) / "session_summary.json").write_text(
+        json.dumps(session, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    return session
+
+
+def process_private_gallery_enrollment(
+    *,
+    video_path: str | Path,
+    cfg_path: str | Path,
+    checkpoint_iter: int,
+    run_root: str | Path,
+    detection_device: str | None = None,
+    yolo_model: str = "yolov8n.pt",
+    det_conf: float = 0.35,
+    pose_conf: float = 0.4,
+    min_track_frames: int = 20,
+    min_bbox_size: int = 64,
+    min_track_confidence: float = 0.30,
+    mask_threshold: float = 0.55,
+    min_mask_ratio: float = 0.03,
+    min_valid_frames: int = 16,
+) -> dict[str, Any]:
+    session = process_video_to_tracks(
+        video_path=video_path,
+        cfg_path=cfg_path,
+        checkpoint_iter=checkpoint_iter,
+        run_root=run_root,
+        detection_device=detection_device,
+        yolo_model=yolo_model,
+        det_conf=det_conf,
+        pose_conf=pose_conf,
+        min_track_frames=min_track_frames,
+        min_bbox_size=min_bbox_size,
+        min_track_confidence=min_track_confidence,
+        mask_threshold=mask_threshold,
+        min_mask_ratio=min_mask_ratio,
+        min_valid_frames=min_valid_frames,
+    )
+    session["mode"] = "private_gallery_enrollment"
+    (Path(session["run_dir"]) / "session_summary.json").write_text(
+        json.dumps(session, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    return session
+
+
+def process_private_gallery_recognition(
+    *,
+    video_path: str | Path,
+    gallery_root: str | Path,
+    cfg_path: str | Path,
+    checkpoint_iter: int,
+    run_root: str | Path,
+    topk: int = 5,
+    low_conf_distance: float = 0.70,
+    low_conf_margin: float = 0.02,
+    detection_device: str | None = None,
+    yolo_model: str = "yolov8n.pt",
+    det_conf: float = 0.35,
+    pose_conf: float = 0.4,
+    min_track_frames: int = 20,
+    min_bbox_size: int = 64,
+    min_track_confidence: float = 0.30,
+    mask_threshold: float = 0.55,
+    min_mask_ratio: float = 0.03,
+    min_valid_frames: int = 16,
+) -> dict[str, Any]:
+    session = process_video_to_tracks(
+        video_path=video_path,
+        cfg_path=cfg_path,
+        checkpoint_iter=checkpoint_iter,
+        run_root=run_root,
+        detection_device=detection_device,
+        yolo_model=yolo_model,
+        det_conf=det_conf,
+        pose_conf=pose_conf,
+        min_track_frames=min_track_frames,
+        min_bbox_size=min_bbox_size,
+        min_track_confidence=min_track_confidence,
+        mask_threshold=mask_threshold,
+        min_mask_ratio=min_mask_ratio,
+        min_valid_frames=min_valid_frames,
+    )
+
+    gallery_index = load_private_gallery_index(gallery_root)
+    for track_record in session["tracks"]:
+        if track_record["status"] != "ok" or not track_record.get("embedding_path"):
+            continue
+        embedding = np.asarray(np.load(track_record["embedding_path"]), dtype=np.float32)
+        result = match_private_gallery(embedding, gallery_root, topk=topk)
+        rows = result["rows"]
+        top1_score = rows[0]["score"] if rows else None
+        top2_distance = rows[1]["distance"] if len(rows) > 1 else None
+        distance_margin = None
+        if rows and len(rows) > 1:
+            distance_margin = float(rows[1]["distance"]) - float(rows[0]["distance"])
+        track_record.update(
+            {
+                "rows": rows,
+                "gallery_count": int(result["identity_count"]),
+                "top1_identity": result["top1_identity"],
+                "top1_distance": result["top1_distance"],
+                "top1_score": top1_score,
+                "top2_distance": top2_distance,
+                "distance_margin": distance_margin,
+                "review_required": bool(result["review_required"]),
+                "review_reasons": list(result["review_reasons"]),
+            }
+        )
+
+    session.update(
+        {
+            "private_gallery_root": str(Path(gallery_root).resolve()),
+            "private_gallery_identity_count": int(len(gallery_index.get("identities", {}))),
+            "low_conf_distance": float(low_conf_distance),
+            "low_conf_margin": float(low_conf_margin),
+            "mode": "private_gallery_recognition",
+        }
+    )
+    (Path(session["run_dir"]) / "session_summary.json").write_text(
         json.dumps(session, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )

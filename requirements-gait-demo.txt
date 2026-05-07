@@ -1,3 +1,17 @@
+# PyTorch / torchvision are installed separately because the wheel source
+# depends on whether the target machine uses CUDA or CPU-only.
 gradio==6.10.0
 mediapipe==0.10.14
 ultralytics==8.4.31
+numpy==2.4.4
+opencv-python==4.13.0.92
+pandas==2.2.3
+Pillow==11.1.0
+PyYAML==6.0.3
+tensorboard==2.20.0
+einops==0.8.2
+kornia==0.8.2
+matplotlib==3.10.8
+imageio==2.37.3
+scikit-learn==1.8.0
+tqdm==4.67.3

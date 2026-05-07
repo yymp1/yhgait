@@ -1,15 +1,76 @@
-# 人物背影/姿态自动识别 Demo
+# 私有步态库识别 / OpenGait Demo
 
-这是一个面向 `macOS Apple Silicon` 的本地最小可运行 demo，功能只覆盖：
+当前仓库的主流程已经切换为 Linux 上的“私有步态库录入 + 识别” demo。它复用真实 OpenGait checkpoint、真实视频前处理和 Gradio 页面，当前支持：
 
-1. 读取本地视频文件
-2. 检测视频中的 `person`
-3. 对每个 `person` 做姿态关键点估计
-4. 基于规则输出 `front / back / side / unknown`
-5. 在视频帧上绘制 `bbox`、`skeleton`、`orientation label`
-6. 把结果视频写到 `outputs/`
+1. 上传真实人物视频，自动检测 / 跟踪 / 提取 silhouette / 生成 gait embedding
+2. 以 `identity` 为单位录入自己的私有步态库
+3. 查看已录入 identity、样本数和样本基本信息
+4. 上传新视频，与自己的私有步态库做 Top-K 识别
+5. 保留 CASIA-B 训练、评估和数据集分析页作为辅助研究能力
 
-## 当前 Linux 现场状态（2026-04-01）
+原始的 `macOS Apple Silicon` 人物背影/姿态工具链仍然保留，但它已经不是当前主入口。
+
+## 新手先看
+
+如果你的目标是“把这个项目迁到另一台 `Win11 + NVIDIA GPU` 电脑并跑起 GUI”，先不要从训练章节开始看，直接走这条路：
+
+1. 把当前项目目录复制到新电脑
+2. 确认新电脑上有 `external/OpenGait/`
+3. 确认新电脑上有默认 checkpoint：
+   `external/OpenGait/output/CASIA-B/GaitSet/formal_conservative_real/checkpoints/formal_conservative_real-01000.pt`
+4. 如果你还想保留旧样本库，再把 `data/private_gallery/` 一起复制过去
+5. 在 Win11 上双击 `scripts/start_win11_demo.bat`
+6. 或者在 PowerShell 里运行：
+
+```powershell
+Set-ExecutionPolicy -Scope Process Bypass
+.\scripts\start_win11_demo.ps1
+```
+
+更详细的新手版迁移说明见：
+
+- `docs/win11_deployment.md`
+
+## 先理解两条运行路径
+
+为了避免一上来就混淆，当前仓库其实有两条不同的使用路径：
+
+### 1. 基础视频处理 CLI
+
+入口：
+
+- `app.py`
+
+能做的事：
+
+- 人体检测
+- 姿态估计
+- 朝向判断
+- 轨迹导出
+
+这条路不依赖 OpenGait checkpoint，更适合做最基础的视频预处理验证。
+
+### 2. 完整私有步态库 demo
+
+入口：
+
+- `app/gradio_gait_demo.py`
+
+能做的事：
+
+- 真实视频 -> track -> silhouette -> gait embedding
+- 录入本地私有步态库
+- 上传新视频做 Top-K 识别
+
+这条路依赖：
+
+- `external/OpenGait/` 代码
+- 已训练好的 checkpoint
+- 可用 CUDA GPU
+
+如果你是 Win11 新机器迁移，通常你真正想跑的是这第二条。
+
+## 当前 Linux 主线状态（2026-04-02）
 
 - 真实 `CASIA-B silhouette` 已通过官方链接下载到 `downloads/GaitDatasetB-silh.zip`
 - 原始数据已解压并整理到 `datasets/external/casia_b`
@@ -35,11 +96,21 @@
   - `NM@R1 = 23.95%`
   - `BG@R1 = 17.17%`
   - `CL@R1 = 8.00%`
-- 当前最合理的下一步是先看评估结果与 TensorBoard 曲线，再决定是否规划下一轮更长训练
-- 当前仍不应把这轮结果写成最终实验结果或最终精度结论
+- 当前主 GUI 已切换为“私有步态库录入 / 识别”优先
+- 当前私有步态库主流程是：
+  - 录入：真实视频 -> track -> silhouette -> embedding -> 写入 `data/private_gallery`
+  - 识别：真实视频 -> track -> silhouette -> embedding -> 与 `data/private_gallery` 匹配
+- 当前仍不应把这轮结果写成最终业务效果或最终精度结论
+- 如果要继续提升真实视频效果，当前优先应改前处理质量和私有库样本采集，而不是继续训练主体
 
 建议优先查看：
 
+- `reports/private_gallery_setup.md`
+- `reports/private_gallery_schema.md`
+- `reports/private_gallery_validation.md`
+- `reports/private_gallery_scope.md`
+- `reports/private_gallery_recognition_flow.md`
+- `reports/private_gallery_next_steps.md`
 - `reports/casia_b_download.md`
 - `reports/real_data_validation.md`
 - `reports/linux_third_round.md`
@@ -66,12 +137,19 @@
 - `scripts/prepare_for_opengait.py`：把当前 `data/` 整理成更接近 OpenGait 的目录
 - `scripts/check_casia_b_layout.py`：检查 CASIA-B 原始目录是否接近 OpenGait 预处理期望结构
 - `scripts/clean_casia_b_empty_views.py`：扫描并可选清理 CASIA-B 中真正为空的 view 目录
+- `src/private_gallery_core.py`：私有步态库索引、prototype 聚合、Top-K 匹配
+- `src/video_gait_core.py`：真实视频 -> track -> silhouette -> embedding
+- `app/gradio_gait_demo.py`：当前主 GUI，默认页面是私有步态库录入 / 识别
+- `scripts/check_windows_demo_env.py`：Win11 本地环境检查
+- `scripts/start_win11_demo.ps1`：Win11 一键部署并启动 demo
+- `scripts/start_win11_demo.bat`：Win11 双击启动入口
 - `scripts/setup_opengait_pretreatment_env.py`：创建 OpenGait pretreatment 专用最小 Python 环境
 - `scripts/run_opengait_pretreatment.py`：生成或执行外部 OpenGait pretreatment 命令
 - `scripts/preflight_opengait_pretreatment.py`：pretreatment 真执行前的一键预检入口
 - `configs/`：OpenGait 准备阶段的路径模板
 - `datasets/external/`：公开 gait 数据集预留目录
 - `datasets/processed/`：公开数据集 pretreatment 输出目录
+- `docs/win11_deployment.md`：Win11 新电脑迁移和部署说明
 - `samples/`：输入视频目录
 - `outputs/`：输出视频目录
 
@@ -83,7 +161,53 @@
 - Docker 里不用默认的 `pip install` 方案，而是改用 `uv pip --torch-backend cpu`
   原因：在 `linux/arm64` 下默认解析 `torch` 时，可能会把一串 `nvidia-*` 包带进镜像；这里显式固定为 `CPU-only`，更符合本项目的 CPU-first 目标
 
-## 本地运行
+## Win11 一键部署（推荐）
+
+如果你现在就是要在新 Win11 电脑上把完整 demo 跑起来，建议直接用仓库里的脚本：
+
+```powershell
+Set-ExecutionPolicy -Scope Process Bypass
+.\scripts\start_win11_demo.ps1
+```
+
+或者直接双击：
+
+```text
+scripts/start_win11_demo.bat
+```
+
+这个脚本会自动做下面几件事：
+
+1. 检查 `Python / CUDA / OpenGait / checkpoint`
+2. 创建虚拟环境 `.venvs\win11-demo`
+3. 安装 `torch / torchvision`
+4. 安装 `requirements-gait-demo.txt`
+5. 生成 `reports/windows_env_check.json`
+6. 启动 Gradio 页面
+
+注意两点：
+
+- 如果 `external/OpenGait` 缺失，脚本会尝试自动 clone 官方仓库
+- 但脚本**不会**自动下载你自己的 `formal_conservative_real-01000.pt`，这个 checkpoint 需要你从旧电脑手动复制
+
+更完整的迁移细节、目录清单和排错方式见：
+
+- `docs/win11_deployment.md`
+
+## 完整私有步态库 Demo 手工启动
+
+如果你已经装好环境，不想每次都重新执行部署脚本，可以直接启动 GUI：
+
+```powershell
+.\.venvs\win11-demo\Scripts\python.exe .\app\gradio_gait_demo.py --server-name 127.0.0.1 --server-port 7860
+```
+
+默认页面就是“样本录入 / 视频识别”。
+
+当前这条 demo 路径依赖 CUDA GPU。  
+如果 `torch.cuda.is_available()` 为假，基础 `app.py` 仍可以跑，但完整私有步态库 demo 不会工作。
+
+## 基础 CLI 运行（不含 OpenGait 私有库 demo）
 
 如果系统已经有 `python3.11`：
 
